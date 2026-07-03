@@ -130,25 +130,55 @@ fi
 success "All packages installed"
 
 # ══════════════════════════════════════════════
-#  STEP 2 — Domain & SSL
+#  STEP 2 — Domains & SSL
 # ══════════════════════════════════════════════
-step "Domain & SSL Certificate"
+step "Domains & SSL Certificates"
 echo ""
-echo -e "  ${YELLOW}Make sure your domain's / subdomain's DNS A record already${NC}"
-echo -e "  ${YELLOW}points to THIS server's IP, otherwise SSL cannot be issued.${NC}"
+echo -e "  ${YELLOW}Point the DNS A record of every domain below to THIS server's IP${NC}"
+echo -e "  ${YELLOW}before continuing, otherwise SSL cannot be issued.${NC}"
+echo ""
+echo -e "  ${DIM}The public site and the admin panel run on separate hostnames so the${NC}"
+echo -e "  ${DIM}admin panel is never exposed on the main site (better security).${NC}"
 echo ""
 
+# ── Main site domain (+ optional alias such as www or a subdomain) ──
 while true; do
-    read -rp "$(echo -e "  ${BOLD}Domain or subdomain${NC} (e.g. portfolio.example.com): ")" DOMAIN
-    [[ -n "$DOMAIN" ]] && break
+    read -rp "$(echo -e "  ${BOLD}Main site domain${NC} (e.g. example.com): ")" MAIN_DOMAIN
+    [[ -n "$MAIN_DOMAIN" ]] && break
     echo -e "  ${RED}Domain cannot be empty.${NC}"
 done
 
+read -rp "$(echo -e "  ${BOLD}Extra main hostname${NC} (e.g. www.example.com — Enter to skip): ")" MAIN_ALIAS
+
+# ── Admin panel subdomain (must differ from the main hostnames) ──
+while true; do
+    read -rp "$(echo -e "  ${BOLD}Admin panel subdomain${NC} (e.g. admin.example.com): ")" ADMIN_DOMAIN
+    if [[ -z "$ADMIN_DOMAIN" ]]; then
+        echo -e "  ${RED}Admin subdomain cannot be empty.${NC}"
+    elif [[ "$ADMIN_DOMAIN" == "$MAIN_DOMAIN" || "$ADMIN_DOMAIN" == "$MAIN_ALIAS" ]]; then
+        echo -e "  ${RED}Admin subdomain must be different from the main hostnames.${NC}"
+    else
+        break
+    fi
+done
+
 read -rp "$(echo -e "  ${BOLD}Email for SSL notices${NC} (optional, press Enter to skip): ")" SSL_EMAIL
-[[ -z "$SSL_EMAIL" ]] && SSL_EMAIL="admin@${DOMAIN}"
+[[ -z "$SSL_EMAIL" ]] && SSL_EMAIL="admin@${MAIN_DOMAIN}"
+
+echo ""
+echo -e "  ${GREEN}Summary:${NC}"
+echo -e "  Main site  : ${CYAN}${MAIN_DOMAIN}${NC}${MAIN_ALIAS:+${DIM} , ${NC}${CYAN}${MAIN_ALIAS}${NC}}"
+echo -e "  Admin panel: ${CYAN}${ADMIN_DOMAIN}${NC}"
+echo ""
+read -rp "$(echo -e "  ${BOLD}Proceed? [y/N]:${NC} ")" CONFIRM
+[[ ! "$CONFIRM" =~ ^[Yy]$ ]] && echo "Aborted." && exit 0
 
 # Frontend dir must exist before nginx starts serving it (built later).
 mkdir -p "$FRONTEND_DIR" "$DATA_DIR/uploads"
+
+# server_name value for the main block (primary + optional alias).
+MAIN_SERVER_NAMES="$MAIN_DOMAIN"
+[[ -n "$MAIN_ALIAS" ]] && MAIN_SERVER_NAMES="$MAIN_DOMAIN $MAIN_ALIAS"
 
 # ── Global performance / security tunables ──
 cat > /etc/nginx/conf.d/cobalt-performance.conf <<'NGINXPERF'
@@ -167,26 +197,17 @@ add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 limit_req_zone $binary_remote_addr zone=cobalt_login:10m rate=5r/m;
 NGINXPERF
 
-# ── The site's nginx config (certbot will add the 443/SSL block to this) ──
 rm -f /etc/nginx/sites-enabled/default
-cat > "/etc/nginx/sites-available/cobalt" <<EOF
+
+# ── Main site (public). The /admin route is blocked here so the panel is only
+#    reachable via its own subdomain. certbot adds the 443/SSL block. ──
+cat > "/etc/nginx/sites-available/cobalt-main" <<EOF
 server {
     listen 80;
-    server_name ${DOMAIN};
+    server_name ${MAIN_SERVER_NAMES};
 
     root ${FRONTEND_DIR};
     index index.html;
-
-    # Rate-limit the login endpoint.
-    location = /api/auth/login {
-        limit_req zone=cobalt_login burst=3 nodelay;
-        proxy_pass         http://localhost:${APP_PORT}/api/auth/login;
-        proxy_http_version 1.1;
-        proxy_set_header   Host              \$host;
-        proxy_set_header   X-Real-IP         \$remote_addr;
-        proxy_set_header   X-Forwarded-For   \$proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto \$scheme;
-    }
 
     # API + uploaded media proxied to the backend.
     location ^~ /api/ {
@@ -199,6 +220,11 @@ server {
         proxy_read_timeout 60s;
     }
 
+    # Security: the admin panel must NOT be served on the public site.
+    location ^~ /admin {
+        return 404;
+    }
+
     # Cache hashed static assets aggressively.
     location /assets/ {
         expires 30d;
@@ -206,7 +232,7 @@ server {
         try_files \$uri =404;
     }
 
-    # SPA fallback — React Router handles /about, /admin, etc.
+    # SPA fallback — React Router handles /about, /projects, etc.
     location / {
         try_files \$uri \$uri/ /index.html;
     }
@@ -215,28 +241,90 @@ server {
 }
 EOF
 
-ln -sf /etc/nginx/sites-available/cobalt /etc/nginx/sites-enabled/cobalt
+# ── Admin panel (separate subdomain). Serves the same build; root redirects to
+#    /admin so the panel opens directly. ──
+cat > "/etc/nginx/sites-available/cobalt-admin" <<EOF
+server {
+    listen 80;
+    server_name ${ADMIN_DOMAIN};
+
+    root ${FRONTEND_DIR};
+    index index.html;
+
+    location = / {
+        return 302 /admin;
+    }
+
+    # Rate-limit the login endpoint.
+    location = /api/auth/login {
+        limit_req zone=cobalt_login burst=3 nodelay;
+        proxy_pass         http://localhost:${APP_PORT}/api/auth/login;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              \$host;
+        proxy_set_header   X-Real-IP         \$remote_addr;
+        proxy_set_header   X-Forwarded-For   \$proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto \$scheme;
+    }
+
+    location ^~ /api/ {
+        proxy_pass         http://localhost:${APP_PORT}/api/;
+        proxy_http_version 1.1;
+        proxy_set_header   Host              \$host;
+        proxy_set_header   X-Real-IP         \$remote_addr;
+        proxy_set_header   X-Forwarded-For   \$proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto \$scheme;
+        proxy_read_timeout 60s;
+    }
+
+    location /assets/ {
+        expires 30d;
+        add_header Cache-Control "public, immutable";
+        try_files \$uri =404;
+    }
+
+    # SPA fallback — serves the app for /admin and its sub-routes.
+    location / {
+        try_files \$uri \$uri/ /index.html;
+    }
+
+    client_max_body_size 100M;
+}
+EOF
+
+ln -sf /etc/nginx/sites-available/cobalt-main  /etc/nginx/sites-enabled/cobalt-main
+ln -sf /etc/nginx/sites-available/cobalt-admin /etc/nginx/sites-enabled/cobalt-admin
 
 if nginx -t 2>/dev/null; then
     systemctl reload nginx
-    success "Nginx configured for ${DOMAIN}"
+    success "Nginx configured (main + admin)"
 else
     nginx -t
     error "Nginx config test failed — see output above."
 fi
 
-# ── Obtain the certificate ──
-info "Requesting SSL certificate for ${DOMAIN}..."
-if certbot --nginx -d "$DOMAIN" \
-    --non-interactive --agree-tos \
-    --email "$SSL_EMAIL" \
-    --redirect 2>/dev/null; then
-    success "SSL certificate installed for ${DOMAIN}"
-    SSL_OK=true
+# ── Obtain the certificates ──
+SSL_OK=true
+
+MAIN_CERT_ARGS=(-d "$MAIN_DOMAIN")
+[[ -n "$MAIN_ALIAS" ]] && MAIN_CERT_ARGS+=(-d "$MAIN_ALIAS")
+
+info "Requesting SSL certificate for the main site..."
+if certbot --nginx "${MAIN_CERT_ARGS[@]}" \
+    --non-interactive --agree-tos --email "$SSL_EMAIL" --redirect 2>/dev/null; then
+    success "SSL installed for ${MAIN_SERVER_NAMES}"
 else
-    warn "SSL could not be issued (is DNS pointed here yet?)."
-    warn "The site will run on HTTP for now. Retry later with:"
-    warn "  certbot --nginx -d ${DOMAIN} --redirect"
+    warn "SSL failed for the main site — retry later with:"
+    warn "  certbot --nginx ${MAIN_CERT_ARGS[*]} --redirect"
+    SSL_OK=false
+fi
+
+info "Requesting SSL certificate for the admin panel..."
+if certbot --nginx -d "$ADMIN_DOMAIN" \
+    --non-interactive --agree-tos --email "$SSL_EMAIL" --redirect 2>/dev/null; then
+    success "SSL installed for ${ADMIN_DOMAIN}"
+else
+    warn "SSL failed for the admin panel — retry later with:"
+    warn "  certbot --nginx -d ${ADMIN_DOMAIN} --redirect"
     SSL_OK=false
 fi
 
@@ -436,8 +524,8 @@ echo "  ╔═══════════════════════
 echo "  ║        Installation Complete! ✓           ║"
 echo "  ╚═══════════════════════════════════════════╝"
 echo -e "${NC}"
-echo -e "  🌐  Website   : ${CYAN}${SCHEME}://${DOMAIN}${NC}"
-echo -e "  🔧  Admin     : ${CYAN}${SCHEME}://${DOMAIN}/admin${NC}"
+echo -e "  🌐  Website   : ${CYAN}${SCHEME}://${MAIN_DOMAIN}${NC}"
+echo -e "  🔧  Admin     : ${CYAN}${SCHEME}://${ADMIN_DOMAIN}${NC}  ${DIM}(→ /admin)${NC}"
 echo -e "  👤  Username  : ${CYAN}${ADMIN_USER}${NC}"
 echo -e "  🔑  Password  : ${CYAN}(the one you entered)${NC}"
 echo ""
@@ -447,8 +535,9 @@ echo -e "  journalctl -u cobalt-api -f          — live API logs"
 echo -e "  certbot renew                        — renew SSL manually"
 echo ""
 if ! $SSL_OK; then
-    echo -e "  ${YELLOW}⚠  SSL was not issued. Once DNS points here, run:${NC}"
-    echo -e "     ${BOLD}certbot --nginx -d ${DOMAIN} --redirect${NC}"
+    echo -e "  ${YELLOW}⚠  Some certificates were not issued. Once DNS points here, run:${NC}"
+    echo -e "     ${BOLD}certbot --nginx -d ${MAIN_DOMAIN}${MAIN_ALIAS:+ -d ${MAIN_ALIAS}} --redirect${NC}"
+    echo -e "     ${BOLD}certbot --nginx -d ${ADMIN_DOMAIN} --redirect${NC}"
     echo ""
 fi
 if ! $SERVICE_OK; then

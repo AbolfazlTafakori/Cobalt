@@ -64,25 +64,36 @@ server's IP, then run this as **root**:
 bash <(curl -Ls https://raw.githubusercontent.com/AbolfazlTafakori/Cobalt/main/install.sh)
 ```
 
-The installer is fully automated and asks only for your **domain** and **admin
-credentials**. It then:
+The installer runs in this order:
 
 1. Installs **Node.js 20**, **.NET 9 SDK**, **Nginx**, and **Certbot**
-2. Builds the frontend (`npm run build` → `dist/`)
-3. Publishes the backend (`dotnet publish -c Release`)
-4. Writes `appsettings.json` with a random 64-char JWT secret and your admin login
-5. Registers a **`cobalt-api`** systemd service (auto-restart on boot/crash)
-6. Configures **Nginx** — serves the site, proxies `/api` to the backend, and
-   handles React Router routes (SPA fallback) with login rate-limiting
-7. Issues an **SSL certificate** via Let's Encrypt with automatic renewal
+2. Asks for the **domains** and issues **SSL certificates** (see below)
+3. Asks for the **admin username & password**
+4. Builds the frontend (`npm run build` → `dist/`) and publishes the backend
+   (`dotnet publish -c Release`)
+5. Writes `appsettings.json` with a random 64-char JWT secret and your admin login
+6. Registers a **`cobalt-api`** systemd service (auto-restart on boot/crash)
+7. Configures **Nginx** and finishes
+
+### Domains — main site vs. admin panel
+
+For security, the public site and the admin panel run on **separate hostnames**.
+During install you provide:
+
+| Prompt | Example | Purpose |
+|--------|---------|---------|
+| **Main site domain** | `example.com` | The public portfolio |
+| **Extra main hostname** *(optional)* | `www.example.com` | Alias for the main site |
+| **Admin panel subdomain** | `admin.example.com` | The admin panel, isolated |
+
+Each hostname gets its own SSL certificate. The `/admin` route is **blocked on
+the main site** (returns 404) and is reachable **only** through the admin
+subdomain — so the panel is never exposed on your public URL.
 
 When it finishes:
 
-- 🌐 Website: `https://your-domain`
-- 🔧 Admin:   `https://your-domain/admin`
-
-> **Note:** Because the site and admin share the same React app, only **one
-> domain** is required — the admin lives at the `/admin` route.
+- 🌐 Website: `https://example.com`
+- 🔧 Admin:   `https://admin.example.com`  (opens the panel directly)
 
 ### Requirements for the one-command install
 
