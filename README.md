@@ -10,12 +10,13 @@ with a complete admin panel that controls **everything** (text, numbers, tags, s
 
 ## Structure
 ```
-src/
+src/                   frontend (React + Vite)
 ├── components/        public site (Navbar, sections, UI)
 ├── content/           unified content model + ContentProvider
 ├── admin/             admin panel (pages, components, API client)
 ├── hooks/
 └── App.jsx
+backend/ResumeAPI/     ASP.NET Core (.NET 9) API — see backend/README.md
 ```
 
 ## Run
@@ -24,7 +25,8 @@ src/
 npm install
 npm run dev            # http://localhost:5173  (admin at /admin)
 
-# Backend (separate .NET project)
+# Backend (.NET 9)
+cd backend/ResumeAPI
 dotnet run             # http://localhost:5021
 ```
 

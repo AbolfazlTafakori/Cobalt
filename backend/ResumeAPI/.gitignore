@@ -1,0 +1,6 @@
+# Build output
+bin/
+obj/
+
+# Runtime data (seeded on first run — never commit content, uploads, or credentials)
+Data/
