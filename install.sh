@@ -515,6 +515,19 @@ $SERVICE_OK && success "API service is running" \
 systemctl reload nginx 2>/dev/null
 
 # ══════════════════════════════════════════════
+#  STEP 10 — Management tool (c-ui)
+# ══════════════════════════════════════════════
+step "Installing c-ui Management Tool"
+
+if [[ -f "${SRC_DIR}/c-ui.sh" ]]; then
+    cp "${SRC_DIR}/c-ui.sh" /usr/local/bin/c-ui
+    chmod +x /usr/local/bin/c-ui
+    success "c-ui installed — type 'c-ui' anytime to manage your site"
+else
+    warn "c-ui.sh not found in source — skipping management tool"
+fi
+
+# ══════════════════════════════════════════════
 #  Done
 # ══════════════════════════════════════════════
 SCHEME="http"; $SSL_OK && SCHEME="https"
@@ -529,7 +542,10 @@ echo -e "  🔧  Admin     : ${CYAN}${SCHEME}://${ADMIN_DOMAIN}${NC}  ${DIM}(→
 echo -e "  👤  Username  : ${CYAN}${ADMIN_USER}${NC}"
 echo -e "  🔑  Password  : ${CYAN}(the one you entered)${NC}"
 echo ""
-echo -e "  ${YELLOW}Useful commands:${NC}"
+echo -e "  ${YELLOW}Management tool:${NC}"
+echo -e "  ${BOLD}c-ui${NC}   — change domains, credentials, update, restart, uninstall"
+echo ""
+echo -e "  ${YELLOW}Other useful commands:${NC}"
 echo -e "  systemctl restart cobalt-api         — restart the API"
 echo -e "  journalctl -u cobalt-api -f          — live API logs"
 echo -e "  certbot renew                        — renew SSL manually"

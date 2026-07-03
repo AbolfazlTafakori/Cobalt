@@ -104,7 +104,23 @@ The command above fetches `install.sh` and clones the repo anonymously, so the
 - run the installer from a local checkout (`sudo bash install.sh`) — it detects
   local project files and skips the clone.
 
-### Managing the deployment
+### Managing the deployment — `c-ui`
+
+The installer adds a management menu. Just run:
+
+```bash
+c-ui
+```
+
+From the menu you can:
+
+- **Domain management** — change the main or admin hostname(s) and re-issue SSL
+- **Admin credentials** — change the username / password
+- **Service management** — restart / stop / start the API and view live logs
+- **Update** — pull the latest code, rebuild frontend + backend, keep your data
+- **Uninstall** — remove the service, nginx configs, files (and optionally SSL)
+
+Or use the raw commands:
 
 ```bash
 systemctl restart cobalt-api        # restart the API
@@ -114,7 +130,7 @@ certbot renew                       # renew SSL manually
 ```
 
 Runtime data (content + uploads) lives in `/opt/cobalt/data/` and is **preserved
-across re-installs**.
+across re-installs and updates**.
 
 ---
 
