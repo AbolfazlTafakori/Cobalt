@@ -3,6 +3,12 @@
 #  Cobalt — One-Command Installer for Ubuntu 20.04+
 #  Usage:
 #    bash <(curl -Ls https://raw.githubusercontent.com/AbolfazlTafakori/Cobalt/main/install.sh)
+#
+#  Flow:
+#    1. Install every required package (Node, .NET, Nginx, Certbot…)
+#    2. Ask for the domain / subdomain and obtain an SSL certificate
+#    3. Ask for the admin panel username & password
+#    4. Build the site and start it as a service
 # ============================================================
 
 RED='\033[0;31m'
@@ -51,58 +57,30 @@ echo ""
 echo -e "  ${DIM}Developed by${NC} ${CW}Abolfazl Tafakori${NC}"
 echo ""
 
-# ══════════════════════════════════════════════
-#  STEP 1 — Collect information from user
-# ══════════════════════════════════════════════
-step "Setup Information"
-echo ""
-echo -e "  ${YELLOW}Make sure your domain's DNS A record already points to this server's IP${NC}"
-echo -e "  ${YELLOW}before continuing, otherwise SSL cannot be issued.${NC}"
-echo ""
-
-while true; do
-    read -rp "$(echo -e "  ${BOLD}Domain${NC} (e.g. portfolio.example.com): ")" MAIN_DOMAIN
-    [[ -n "$MAIN_DOMAIN" ]] && break
-    echo -e "  ${RED}Domain cannot be empty.${NC}"
-done
-
-echo ""
-
-while true; do
-    read -rp "$(echo -e "  ${BOLD}Admin username${NC}: ")" ADMIN_USER
-    [[ ${#ADMIN_USER} -ge 3 ]] && break
-    echo -e "  ${RED}Username must be at least 3 characters.${NC}"
-done
-
-while true; do
-    read -rsp "$(echo -e "  ${BOLD}Admin password${NC} (min 8 characters): ")" ADMIN_PASS
-    echo ""
-    if [[ ${#ADMIN_PASS} -lt 8 ]]; then
-        echo -e "  ${RED}Password must be at least 8 characters.${NC}"
-        continue
-    fi
-    read -rsp "$(echo -e "  ${BOLD}Confirm password${NC}: ")" ADMIN_PASS2
-    echo ""
-    [[ "$ADMIN_PASS" == "$ADMIN_PASS2" ]] && break
-    echo -e "  ${RED}Passwords do not match. Please try again.${NC}"
-done
-
-echo ""
-echo -e "  ${GREEN}Configuration summary:${NC}"
-echo -e "  Website URL  : ${CYAN}https://${MAIN_DOMAIN}${NC}"
-echo -e "  Admin URL    : ${CYAN}https://${MAIN_DOMAIN}/admin${NC}"
-echo -e "  Admin user   : ${CYAN}${ADMIN_USER}${NC}"
-echo ""
-read -rp "$(echo -e "  ${BOLD}Proceed with installation? [y/N]:${NC} ")" CONFIRM
-[[ ! "$CONFIRM" =~ ^[Yy]$ ]] && echo "Aborted." && exit 0
+# ---- Global paths / settings ----
+INSTALL_DIR="/opt/cobalt"
+SRC_DIR="${INSTALL_DIR}/src"
+PUBLISH_DIR="${INSTALL_DIR}/publish"
+FRONTEND_DIR="${INSTALL_DIR}/frontend"
+DATA_DIR="${INSTALL_DIR}/data"
+APP_PORT=5000
+REPO_URL="https://github.com/AbolfazlTafakori/Cobalt.git"
+JWT_SECRET=$(head -c 48 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 64)
 
 # ══════════════════════════════════════════════
-#  STEP 2 — Install system dependencies
+#  STEP 1 — Install every required package
 # ══════════════════════════════════════════════
-step "Installing System Dependencies"
+step "Installing System Packages"
 
+export DEBIAN_FRONTEND=noninteractive
+
+info "Updating package lists..."
 apt-get update -qq
-apt-get install -y -qq curl wget unzip git nginx certbot python3-certbot-nginx lsb-release ca-certificates gnupg
+
+info "Installing base tools (nginx, certbot, git, …)..."
+apt-get install -y -qq \
+    curl wget unzip git nginx certbot python3-certbot-nginx \
+    lsb-release ca-certificates gnupg
 success "nginx, certbot, git installed"
 
 # ── Node.js 20 (needed to build the React frontend) ──
@@ -122,7 +100,7 @@ dotnet_ok() { command -v dotnet &>/dev/null && [[ "$(dotnet --version 2>/dev/nul
 
 if dotnet_ok; then
     DOTNET_EXEC="$(command -v dotnet)"
-    success ".NET already installed: $(dotnet --version)  [${DOTNET_EXEC}]"
+    success ".NET already installed: $(dotnet --version)"
 else
     info "Installing .NET 9 SDK..."
     UBUNTU_VER=$(lsb_release -rs 2>/dev/null | cut -d. -f1)
@@ -149,177 +127,30 @@ if [[ -f /usr/share/dotnet/dotnet ]]; then
     DOTNET_EXEC="/usr/share/dotnet/dotnet"
 fi
 [[ -z "$DOTNET_EXEC" ]] && DOTNET_EXEC="$(command -v dotnet)"
-info "Using dotnet binary: ${DOTNET_EXEC}"
+success "All packages installed"
 
 # ══════════════════════════════════════════════
-#  STEP 3 — Download source
+#  STEP 2 — Domain & SSL
 # ══════════════════════════════════════════════
-step "Downloading Source"
+step "Domain & SSL Certificate"
+echo ""
+echo -e "  ${YELLOW}Make sure your domain's / subdomain's DNS A record already${NC}"
+echo -e "  ${YELLOW}points to THIS server's IP, otherwise SSL cannot be issued.${NC}"
+echo ""
 
-INSTALL_DIR="/opt/cobalt"
-SRC_DIR="${INSTALL_DIR}/src"
-PUBLISH_DIR="${INSTALL_DIR}/publish"
-FRONTEND_DIR="${INSTALL_DIR}/frontend"
-DATA_DIR="${INSTALL_DIR}/data"
-APP_PORT=5000
-REPO_URL="https://github.com/AbolfazlTafakori/Cobalt.git"
-JWT_SECRET=$(head -c 48 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 64)
-
-# Preserve existing data (uploads / content) across re-installs.
-BACKUP_DATA=""
-if [[ -d "$DATA_DIR" ]]; then
-    BACKUP_DATA="/tmp/cobalt-data-$$"
-    cp -r "$DATA_DIR" "$BACKUP_DATA"
-    warn "Existing data found — it will be preserved."
-fi
-
-rm -rf "$SRC_DIR" "$PUBLISH_DIR" "$FRONTEND_DIR"
-mkdir -p "$INSTALL_DIR"
-
-# Use local files if the installer is run from a checkout; otherwise clone.
-SCRIPT_DIR=""
-[[ -n "${BASH_SOURCE[0]}" ]] && SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
-
-if [[ -n "$SCRIPT_DIR" ]] && [[ -f "${SCRIPT_DIR}/backend/ResumeAPI/ResumeAPI.csproj" ]]; then
-    info "Using local project files..."
-    mkdir -p "$SRC_DIR"
-    cp -r "${SCRIPT_DIR}/." "$SRC_DIR/"
-else
-    info "Cloning from GitHub..."
-    git clone --depth=1 "$REPO_URL" "$SRC_DIR" \
-        || error "Could not clone repository. If it is private, make it public or clone manually to ${SRC_DIR}."
-fi
-
-mkdir -p "$DATA_DIR/uploads"
-
-# ══════════════════════════════════════════════
-#  STEP 4 — Build frontend (React → dist)
-# ══════════════════════════════════════════════
-step "Building Frontend"
-
-cd "$SRC_DIR"
-info "Installing npm packages..."
-npm ci --no-audit --no-fund 2>&1 | tail -3 || npm install --no-audit --no-fund 2>&1 | tail -3
-info "Building production bundle..."
-npm run build 2>&1 | tail -5
-[[ -f "${SRC_DIR}/dist/index.html" ]] || error "Frontend build failed — dist/index.html not found."
-
-rm -rf "$FRONTEND_DIR"
-cp -r "${SRC_DIR}/dist" "$FRONTEND_DIR"
-success "Frontend built"
-
-# ══════════════════════════════════════════════
-#  STEP 5 — Build backend (ASP.NET Core → publish)
-# ══════════════════════════════════════════════
-step "Building Backend"
-
-rm -rf /tmp/cobalt-build && mkdir -p /tmp/cobalt-build/obj /tmp/cobalt-build/bin
-chmod -R 777 /tmp/cobalt-build
-
-cd "${SRC_DIR}/backend/ResumeAPI"
-info "Publishing (this may take 1-2 minutes on first run)..."
-"$DOTNET_EXEC" publish -c Release \
-    -o "$PUBLISH_DIR" \
-    -p:BaseIntermediateOutputPath=/tmp/cobalt-build/obj/ \
-    -p:BaseOutputPath=/tmp/cobalt-build/bin/ \
-    --nologo 2>&1 | grep -vE "^[[:space:]]*$|Telemetry|telemetry|learn\.microsoft|dotnet-cli|dev-certs|Write your first|Find out what|Explore doc|Report issues|Use \.dotnet"
-
-[[ -f "$PUBLISH_DIR/ResumeAPI.dll" ]] || error "Backend build failed — ResumeAPI.dll not found."
-success "Backend built"
-
-# ══════════════════════════════════════════════
-#  STEP 6 — Configure
-# ══════════════════════════════════════════════
-step "Configuring"
-
-# Restore preserved data if this was a re-install.
-if [[ -n "$BACKUP_DATA" ]]; then
-    rm -rf "$DATA_DIR"
-    mv "$BACKUP_DATA" "$DATA_DIR"
-    success "Previous data restored"
-fi
-
-cat > "$PUBLISH_DIR/appsettings.json" <<EOF
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Warning",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "Urls": "http://localhost:${APP_PORT}",
-  "Data": {
-    "Dir": "${DATA_DIR}"
-  },
-  "Admin": {
-    "Username": "${ADMIN_USER}",
-    "Password": "${ADMIN_PASS}"
-  },
-  "Jwt": {
-    "Secret": "${JWT_SECRET}",
-    "Issuer": "ResumeAPI",
-    "Audience": "ResumeAPI"
-  }
-}
-EOF
-success "Configuration written"
-
-# ══════════════════════════════════════════════
-#  STEP 7 — Permissions
-# ══════════════════════════════════════════════
-step "Setting Permissions"
-
-chown -R www-data:www-data "$INSTALL_DIR"
-chmod -R 755 "$INSTALL_DIR"
-chmod -R 775 "$DATA_DIR"
-success "Permissions set"
-
-# ══════════════════════════════════════════════
-#  STEP 8 — Systemd service
-# ══════════════════════════════════════════════
-step "Creating System Service"
-
-cat > "/etc/systemd/system/cobalt-api.service" <<EOF
-[Unit]
-Description=Cobalt Portfolio API
-After=network.target
-
-[Service]
-WorkingDirectory=${PUBLISH_DIR}
-ExecStart=${DOTNET_EXEC} ${PUBLISH_DIR}/ResumeAPI.dll
-Restart=always
-RestartSec=5
-SyslogIdentifier=cobalt-api
-User=www-data
-Group=www-data
-Environment=ASPNETCORE_ENVIRONMENT=Production
-Environment=ASPNETCORE_URLS=http://localhost:${APP_PORT}
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-systemctl daemon-reload
-systemctl enable cobalt-api >/dev/null 2>&1
-systemctl restart cobalt-api
-
-info "Waiting for API service to start..."
-SERVICE_OK=false
-for _ in $(seq 1 20); do
-    sleep 1
-    if systemctl is-active --quiet cobalt-api; then SERVICE_OK=true; break; fi
+while true; do
+    read -rp "$(echo -e "  ${BOLD}Domain or subdomain${NC} (e.g. portfolio.example.com): ")" DOMAIN
+    [[ -n "$DOMAIN" ]] && break
+    echo -e "  ${RED}Domain cannot be empty.${NC}"
 done
-$SERVICE_OK && success "API service is running" \
-    || warn "API did not start in time — diagnose with: journalctl -u cobalt-api -n 50 --no-pager"
 
-# ══════════════════════════════════════════════
-#  STEP 9 — Nginx
-# ══════════════════════════════════════════════
-step "Configuring Nginx"
+read -rp "$(echo -e "  ${BOLD}Email for SSL notices${NC} (optional, press Enter to skip): ")" SSL_EMAIL
+[[ -z "$SSL_EMAIL" ]] && SSL_EMAIL="admin@${DOMAIN}"
 
-rm -f /etc/nginx/sites-enabled/default
+# Frontend dir must exist before nginx starts serving it (built later).
+mkdir -p "$FRONTEND_DIR" "$DATA_DIR/uploads"
 
+# ── Global performance / security tunables ──
 cat > /etc/nginx/conf.d/cobalt-performance.conf <<'NGINXPERF'
 gzip_vary on;
 gzip_proxied any;
@@ -336,10 +167,12 @@ add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 limit_req_zone $binary_remote_addr zone=cobalt_login:10m rate=5r/m;
 NGINXPERF
 
+# ── The site's nginx config (certbot will add the 443/SSL block to this) ──
+rm -f /etc/nginx/sites-enabled/default
 cat > "/etc/nginx/sites-available/cobalt" <<EOF
 server {
     listen 80;
-    server_name ${MAIN_DOMAIN};
+    server_name ${DOMAIN};
 
     root ${FRONTEND_DIR};
     index index.html;
@@ -386,42 +219,225 @@ ln -sf /etc/nginx/sites-available/cobalt /etc/nginx/sites-enabled/cobalt
 
 if nginx -t 2>/dev/null; then
     systemctl reload nginx
-    success "Nginx configured and reloaded"
+    success "Nginx configured for ${DOMAIN}"
 else
     nginx -t
-    warn "Nginx config has errors — check output above."
+    error "Nginx config test failed — see output above."
 fi
 
-# ══════════════════════════════════════════════
-#  STEP 10 — SSL with Let's Encrypt
-# ══════════════════════════════════════════════
-step "Obtaining SSL Certificate"
-
-info "Getting SSL for ${MAIN_DOMAIN}..."
-if certbot --nginx -d "$MAIN_DOMAIN" \
+# ── Obtain the certificate ──
+info "Requesting SSL certificate for ${DOMAIN}..."
+if certbot --nginx -d "$DOMAIN" \
     --non-interactive --agree-tos \
-    --email "admin@${MAIN_DOMAIN}" \
+    --email "$SSL_EMAIL" \
     --redirect 2>/dev/null; then
-    success "SSL ready for ${MAIN_DOMAIN}"
+    success "SSL certificate installed for ${DOMAIN}"
+    SSL_OK=true
 else
-    warn "SSL failed — make sure DNS points here, then run:"
-    warn "  certbot --nginx -d ${MAIN_DOMAIN} --redirect"
+    warn "SSL could not be issued (is DNS pointed here yet?)."
+    warn "The site will run on HTTP for now. Retry later with:"
+    warn "  certbot --nginx -d ${DOMAIN} --redirect"
+    SSL_OK=false
 fi
 
+# Auto-renewal.
 systemctl enable certbot.timer 2>/dev/null \
     || { (crontab -l 2>/dev/null; echo "0 3 * * * certbot renew --quiet") | crontab -; }
 
 # ══════════════════════════════════════════════
+#  STEP 3 — Admin panel account
+# ══════════════════════════════════════════════
+step "Admin Panel Account"
+echo ""
+
+while true; do
+    read -rp "$(echo -e "  ${BOLD}Admin username${NC}: ")" ADMIN_USER
+    [[ ${#ADMIN_USER} -ge 3 ]] && break
+    echo -e "  ${RED}Username must be at least 3 characters.${NC}"
+done
+
+while true; do
+    read -rsp "$(echo -e "  ${BOLD}Admin password${NC} (min 8 characters): ")" ADMIN_PASS
+    echo ""
+    if [[ ${#ADMIN_PASS} -lt 8 ]]; then
+        echo -e "  ${RED}Password must be at least 8 characters.${NC}"
+        continue
+    fi
+    read -rsp "$(echo -e "  ${BOLD}Confirm password${NC}: ")" ADMIN_PASS2
+    echo ""
+    [[ "$ADMIN_PASS" == "$ADMIN_PASS2" ]] && break
+    echo -e "  ${RED}Passwords do not match. Please try again.${NC}"
+done
+success "Admin account captured"
+
+# ══════════════════════════════════════════════
+#  STEP 4 — Download source
+# ══════════════════════════════════════════════
+step "Downloading Source"
+
+# Preserve existing data (uploads / content) across re-installs.
+BACKUP_DATA=""
+if [[ -d "$DATA_DIR" ]] && [[ -n "$(ls -A "$DATA_DIR" 2>/dev/null)" ]]; then
+    BACKUP_DATA="/tmp/cobalt-data-$$"
+    cp -r "$DATA_DIR" "$BACKUP_DATA"
+    warn "Existing data found — it will be preserved."
+fi
+
+rm -rf "$SRC_DIR" "$PUBLISH_DIR"
+mkdir -p "$INSTALL_DIR"
+
+# Use local files if the installer is run from a checkout; otherwise clone.
+SCRIPT_DIR=""
+[[ -n "${BASH_SOURCE[0]}" ]] && SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd || true)"
+
+if [[ -n "$SCRIPT_DIR" ]] && [[ -f "${SCRIPT_DIR}/backend/ResumeAPI/ResumeAPI.csproj" ]]; then
+    info "Using local project files..."
+    mkdir -p "$SRC_DIR"
+    cp -r "${SCRIPT_DIR}/." "$SRC_DIR/"
+else
+    info "Cloning from GitHub..."
+    git clone --depth=1 "$REPO_URL" "$SRC_DIR" \
+        || error "Could not clone repository. If it is private, clone it manually to ${SRC_DIR} and re-run."
+fi
+success "Source ready"
+
+# ══════════════════════════════════════════════
+#  STEP 5 — Build frontend (React → dist)
+# ══════════════════════════════════════════════
+step "Building Frontend"
+
+cd "$SRC_DIR"
+info "Installing npm packages..."
+npm ci --no-audit --no-fund 2>&1 | tail -3 || npm install --no-audit --no-fund 2>&1 | tail -3
+info "Building production bundle..."
+npm run build 2>&1 | tail -5
+[[ -f "${SRC_DIR}/dist/index.html" ]] || error "Frontend build failed — dist/index.html not found."
+
+rm -rf "$FRONTEND_DIR"
+cp -r "${SRC_DIR}/dist" "$FRONTEND_DIR"
+success "Frontend built"
+
+# ══════════════════════════════════════════════
+#  STEP 6 — Build backend (ASP.NET Core → publish)
+# ══════════════════════════════════════════════
+step "Building Backend"
+
+rm -rf /tmp/cobalt-build && mkdir -p /tmp/cobalt-build/obj /tmp/cobalt-build/bin
+chmod -R 777 /tmp/cobalt-build
+
+cd "${SRC_DIR}/backend/ResumeAPI"
+info "Publishing (this may take 1-2 minutes on first run)..."
+"$DOTNET_EXEC" publish -c Release \
+    -o "$PUBLISH_DIR" \
+    -p:BaseIntermediateOutputPath=/tmp/cobalt-build/obj/ \
+    -p:BaseOutputPath=/tmp/cobalt-build/bin/ \
+    --nologo 2>&1 | grep -vE "^[[:space:]]*$|Telemetry|telemetry|learn\.microsoft|dotnet-cli|dev-certs|Write your first|Find out what|Explore doc|Report issues|Use \.dotnet"
+
+[[ -f "$PUBLISH_DIR/ResumeAPI.dll" ]] || error "Backend build failed — ResumeAPI.dll not found."
+success "Backend built"
+
+# ══════════════════════════════════════════════
+#  STEP 7 — Configure
+# ══════════════════════════════════════════════
+step "Configuring"
+
+# Restore preserved data if this was a re-install.
+if [[ -n "$BACKUP_DATA" ]]; then
+    rm -rf "$DATA_DIR"
+    mv "$BACKUP_DATA" "$DATA_DIR"
+    success "Previous data restored"
+fi
+mkdir -p "$DATA_DIR/uploads"
+
+cat > "$PUBLISH_DIR/appsettings.json" <<EOF
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Warning",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "Urls": "http://localhost:${APP_PORT}",
+  "Data": {
+    "Dir": "${DATA_DIR}"
+  },
+  "Admin": {
+    "Username": "${ADMIN_USER}",
+    "Password": "${ADMIN_PASS}"
+  },
+  "Jwt": {
+    "Secret": "${JWT_SECRET}",
+    "Issuer": "ResumeAPI",
+    "Audience": "ResumeAPI"
+  }
+}
+EOF
+success "Configuration written"
+
+# ══════════════════════════════════════════════
+#  STEP 8 — Permissions
+# ══════════════════════════════════════════════
+step "Setting Permissions"
+
+chown -R www-data:www-data "$INSTALL_DIR"
+chmod -R 755 "$INSTALL_DIR"
+chmod -R 775 "$DATA_DIR"
+success "Permissions set"
+
+# ══════════════════════════════════════════════
+#  STEP 9 — Systemd service
+# ══════════════════════════════════════════════
+step "Creating System Service"
+
+cat > "/etc/systemd/system/cobalt-api.service" <<EOF
+[Unit]
+Description=Cobalt Portfolio API
+After=network.target
+
+[Service]
+WorkingDirectory=${PUBLISH_DIR}
+ExecStart=${DOTNET_EXEC} ${PUBLISH_DIR}/ResumeAPI.dll
+Restart=always
+RestartSec=5
+SyslogIdentifier=cobalt-api
+User=www-data
+Group=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=ASPNETCORE_URLS=http://localhost:${APP_PORT}
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+systemctl daemon-reload
+systemctl enable cobalt-api >/dev/null 2>&1
+systemctl restart cobalt-api
+
+info "Waiting for API service to start..."
+SERVICE_OK=false
+for _ in $(seq 1 20); do
+    sleep 1
+    if systemctl is-active --quiet cobalt-api; then SERVICE_OK=true; break; fi
+done
+$SERVICE_OK && success "API service is running" \
+    || warn "API did not start in time — diagnose: journalctl -u cobalt-api -n 50 --no-pager"
+
+# Reload nginx now that the frontend is in place.
+systemctl reload nginx 2>/dev/null
+
+# ══════════════════════════════════════════════
 #  Done
 # ══════════════════════════════════════════════
+SCHEME="http"; $SSL_OK && SCHEME="https"
 echo ""
 echo -e "${GREEN}${BOLD}"
 echo "  ╔═══════════════════════════════════════════╗"
 echo "  ║        Installation Complete! ✓           ║"
 echo "  ╚═══════════════════════════════════════════╝"
 echo -e "${NC}"
-echo -e "  🌐  Website   : ${CYAN}https://${MAIN_DOMAIN}${NC}"
-echo -e "  🔧  Admin     : ${CYAN}https://${MAIN_DOMAIN}/admin${NC}"
+echo -e "  🌐  Website   : ${CYAN}${SCHEME}://${DOMAIN}${NC}"
+echo -e "  🔧  Admin     : ${CYAN}${SCHEME}://${DOMAIN}/admin${NC}"
 echo -e "  👤  Username  : ${CYAN}${ADMIN_USER}${NC}"
 echo -e "  🔑  Password  : ${CYAN}(the one you entered)${NC}"
 echo ""
@@ -430,8 +446,13 @@ echo -e "  systemctl restart cobalt-api         — restart the API"
 echo -e "  journalctl -u cobalt-api -f          — live API logs"
 echo -e "  certbot renew                        — renew SSL manually"
 echo ""
+if ! $SSL_OK; then
+    echo -e "  ${YELLOW}⚠  SSL was not issued. Once DNS points here, run:${NC}"
+    echo -e "     ${BOLD}certbot --nginx -d ${DOMAIN} --redirect${NC}"
+    echo ""
+fi
 if ! $SERVICE_OK; then
     echo -e "  ${RED}⚠  API service did not start automatically.${NC}"
-    echo -e "  Diagnose with: ${YELLOW}journalctl -u cobalt-api -n 50 --no-pager${NC}"
+    echo -e "  Diagnose: ${YELLOW}journalctl -u cobalt-api -n 50 --no-pager${NC}"
     echo ""
 fi
