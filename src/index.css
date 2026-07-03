@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Theme color tokens as R G B channels (space-separated for alpha support).
+     Defaults match the original design; the admin panel overrides these at
+     runtime via ContentProvider. */
+  :root {
+    --c-brand: 37 99 235;
+    --c-brand-light: 59 130 246;
+    --c-brand-dark: 29 78 216;
+    --c-ink-900: 8 11 22;
+    --c-ink-800: 11 17 32;
+    --c-ink-700: 15 23 41;
+    --c-ink-600: 19 28 49;
+    --c-dot: 4 62 195;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink-800 text-white font-sans antialiased;
+  }
+
+  /* Light theme surface overrides */
+  html:not(.dark) body {
+    @apply bg-slate-50 text-slate-900;
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-8;
+  }
+
+  /* Decorative dotted grid used near the edges of the hero */
+  .dot-grid {
+    background-image: radial-gradient(currentColor 1.4px, transparent 1.4px);
+    background-size: 22px 22px;
+  }
+}
