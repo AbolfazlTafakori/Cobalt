@@ -7,6 +7,20 @@ edits needed to update your content — just log in to `/admin` and save.
 
 ---
 
+## ⚡ Quick install
+
+Deploy the whole site (frontend + backend + SSL) to a fresh Ubuntu server with a
+single command, run as **root**:
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/AbolfazlTafakori/Cobalt/main/install.sh)
+```
+
+Just point your domain's DNS at the server first. Full details in
+[Deploy to a server](#deploy-to-a-server-one-command) below.
+
+---
+
 ## Stack
 
 | Layer | Technology |
