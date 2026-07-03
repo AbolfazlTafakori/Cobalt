@@ -63,9 +63,14 @@ SRC_DIR="${INSTALL_DIR}/src"
 PUBLISH_DIR="${INSTALL_DIR}/publish"
 FRONTEND_DIR="${INSTALL_DIR}/frontend"
 DATA_DIR="${INSTALL_DIR}/data"
-APP_PORT=5000
+APP_PORT=5000   # default; auto-adjusted below to avoid clashing with other apps
 REPO_URL="https://github.com/AbolfazlTafakori/Cobalt.git"
 JWT_SECRET=$(head -c 48 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 64)
+
+# Returns true if a local TCP port is already bound by another process.
+port_in_use() { ss -ltnH 2>/dev/null | awk '{print $4}' | grep -qE "[:.]${1}\$"; }
+# First free port at/after $1 (used so multiple apps can share one server).
+find_free_port() { local p=${1:-5000}; while port_in_use "$p"; do p=$((p+1)); done; echo "$p"; }
 
 # ══════════════════════════════════════════════
 #  STEP 1 — Install every required package
@@ -80,7 +85,7 @@ apt-get update -qq
 info "Installing base tools (nginx, certbot, git, …)..."
 apt-get install -y -qq \
     curl wget unzip git nginx certbot python3-certbot-nginx \
-    lsb-release ca-certificates gnupg
+    lsb-release ca-certificates gnupg iproute2
 success "nginx, certbot, git installed"
 
 # ── Node.js 20 (needed to build the React frontend) ──
@@ -128,6 +133,15 @@ if [[ -f /usr/share/dotnet/dotnet ]]; then
 fi
 [[ -z "$DOTNET_EXEC" ]] && DOTNET_EXEC="$(command -v dotnet)"
 success "All packages installed"
+
+# ── Pick a backend port that doesn't clash with any other app on this server ──
+# Reuse the previous port on re-install; otherwise find the first free one.
+if [[ -f "${PUBLISH_DIR}/appsettings.json" ]]; then
+    OLD_PORT=$(grep -oP '(?<=localhost:)\d+' "${PUBLISH_DIR}/appsettings.json" 2>/dev/null | head -1)
+    [[ -n "$OLD_PORT" ]] && APP_PORT="$OLD_PORT"
+fi
+port_in_use "$APP_PORT" && APP_PORT=$(find_free_port "$APP_PORT")
+info "Backend will listen on 127.0.0.1:${APP_PORT}"
 
 # ══════════════════════════════════════════════
 #  STEP 2 — Domains & SSL
@@ -180,22 +194,14 @@ mkdir -p "$FRONTEND_DIR" "$DATA_DIR/uploads"
 MAIN_SERVER_NAMES="$MAIN_DOMAIN"
 [[ -n "$MAIN_ALIAS" ]] && MAIN_SERVER_NAMES="$MAIN_DOMAIN $MAIN_ALIAS"
 
-# ── Global performance / security tunables ──
-cat > /etc/nginx/conf.d/cobalt-performance.conf <<'NGINXPERF'
-gzip_vary on;
-gzip_proxied any;
-gzip_comp_level 6;
-gzip_types text/plain text/css text/javascript application/javascript application/json image/svg+xml;
-
-client_max_body_size 100M;
-keepalive_timeout 65;
-
-add_header X-Frame-Options "SAMEORIGIN" always;
-add_header X-Content-Type-Options "nosniff" always;
-add_header Referrer-Policy "strict-origin-when-cross-origin" always;
-
+# ── Only the login rate-limit zone goes in http{} context (it must). We keep the
+#    name unique (cobalt_login) and put NOTHING else here, so this file never
+#    collides with global directives declared by other apps on the same server
+#    (duplicate gzip_/keepalive_ directives in conf.d make nginx refuse to load). ──
+cat > /etc/nginx/conf.d/cobalt-ratelimit.conf <<'NGINXRL'
 limit_req_zone $binary_remote_addr zone=cobalt_login:10m rate=5r/m;
-NGINXPERF
+NGINXRL
+rm -f /etc/nginx/conf.d/cobalt-performance.conf   # remove file from older installs
 
 rm -f /etc/nginx/sites-enabled/default
 
@@ -208,6 +214,16 @@ server {
 
     root ${FRONTEND_DIR};
     index index.html;
+
+    # Per-server tunables (kept out of conf.d to avoid clashing with other apps).
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/javascript application/javascript application/json image/svg+xml;
+    client_max_body_size 100M;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
     # API + uploaded media proxied to the backend.
     location ^~ /api/ {
@@ -236,8 +252,6 @@ server {
     location / {
         try_files \$uri \$uri/ /index.html;
     }
-
-    client_max_body_size 100M;
 }
 EOF
 
@@ -250,6 +264,16 @@ server {
 
     root ${FRONTEND_DIR};
     index index.html;
+
+    # Per-server tunables (kept out of conf.d to avoid clashing with other apps).
+    gzip on;
+    gzip_vary on;
+    gzip_comp_level 6;
+    gzip_types text/plain text/css text/javascript application/javascript application/json image/svg+xml;
+    client_max_body_size 100M;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
     location = / {
         return 302 /admin;
@@ -286,8 +310,6 @@ server {
     location / {
         try_files \$uri \$uri/ /index.html;
     }
-
-    client_max_body_size 100M;
 }
 EOF
 

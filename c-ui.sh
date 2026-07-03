@@ -342,7 +342,7 @@ menu_uninstall() {
     info "Removing nginx configs..."
     rm -f /etc/nginx/sites-enabled/cobalt-main /etc/nginx/sites-enabled/cobalt-admin
     rm -f /etc/nginx/sites-available/cobalt-main /etc/nginx/sites-available/cobalt-admin
-    rm -f /etc/nginx/conf.d/cobalt-performance.conf
+    rm -f /etc/nginx/conf.d/cobalt-ratelimit.conf /etc/nginx/conf.d/cobalt-performance.conf
     nginx -t 2>/dev/null && systemctl reload nginx
 
     if [[ "$RM_SSL" =~ ^[Yy]$ ]]; then

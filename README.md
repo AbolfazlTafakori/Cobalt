@@ -132,6 +132,20 @@ certbot renew                       # renew SSL manually
 Runtime data (content + uploads) lives in `/opt/cobalt/data/` and is **preserved
 across re-installs and updates**.
 
+### Running alongside other apps on the same server
+
+Cobalt is built to coexist with other sites (e.g. another portfolio) on one
+server without conflicts:
+
+- **Backend port** is auto-selected — it picks the first free port from `5000`
+  up, so it never collides with another app already bound to `5000`.
+- **Nginx globals** are scoped per-site. Only a uniquely-named rate-limit zone
+  (`cobalt_login`) is placed in `conf.d/`; all other directives live inside
+  Cobalt's own `server {}` blocks, so they never duplicate another app's
+  `http{}`-level directives (which would stop nginx from loading).
+- **Service, nginx configs, install dir, and CLI** are all namespaced
+  (`cobalt-api`, `cobalt-main`/`cobalt-admin`, `/opt/cobalt`, `c-ui`).
+
 ---
 
 ## Run locally (development)
