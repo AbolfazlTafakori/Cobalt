@@ -22,7 +22,12 @@ public class DataStore
 
     public DataStore(IWebHostEnvironment env, IConfiguration config)
     {
-        _dataDir = Path.Combine(env.ContentRootPath, "Data");
+        // Data directory can be overridden (e.g. a persistent path on a server)
+        // via the "Data:Dir" config key or the Data__Dir environment variable.
+        var configuredDir = config["Data:Dir"];
+        _dataDir = string.IsNullOrWhiteSpace(configuredDir)
+            ? Path.Combine(env.ContentRootPath, "Data")
+            : configuredDir;
         _uploadsDir = Path.Combine(_dataDir, "uploads");
         _contentFile = Path.Combine(_dataDir, "content.json");
         _authFile = Path.Combine(_dataDir, "auth.json");

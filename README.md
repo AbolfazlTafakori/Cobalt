@@ -19,7 +19,24 @@ src/                   frontend (React + Vite)
 backend/ResumeAPI/     ASP.NET Core (.NET 9) API — see backend/README.md
 ```
 
-## Run
+## Deploy to a server (one command)
+
+On a fresh Ubuntu 20.04+ server (as root), point your domain's DNS A record at
+the server, then run:
+
+```bash
+bash <(curl -Ls https://raw.githubusercontent.com/AbolfazlTafakori/Cobalt/main/install.sh)
+```
+
+The installer sets up Node.js, .NET 9, Nginx and Certbot; builds the frontend
+and backend; creates a `cobalt-api` systemd service; and issues an SSL
+certificate. It asks only for your domain and admin credentials.
+
+> The repository must be **public** for the one-command install to work
+> (`curl` and `git clone` need anonymous access). See `install.sh` for the
+> local/private-repo path.
+
+## Run (local development)
 ```bash
 # Frontend
 npm install
