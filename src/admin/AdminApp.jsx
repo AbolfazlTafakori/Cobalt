@@ -32,7 +32,7 @@ export default function AdminApp() {
               </RequireAuth>
             }
           >
-            <Route index element={<Navigate to="identity" replace />} />
+            <Route index element={<Navigate to="/admin/identity" replace />} />
             <Route path="identity" element={<Identity />} />
             <Route path="navbar" element={<NavbarEditor />} />
             <Route path="theme" element={<Theme />} />
@@ -44,7 +44,7 @@ export default function AdminApp() {
             <Route path="socials" element={<SocialsEditor />} />
             <Route path="password" element={<Password />} />
           </Route>
-          <Route path="*" element={<Navigate to="identity" replace />} />
+          <Route path="*" element={<Navigate to="/admin/identity" replace />} />
         </Routes>
       </ConfirmProvider>
     </ToastProvider>
