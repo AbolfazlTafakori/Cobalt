@@ -22,7 +22,7 @@ export function ToastProvider({ children }) {
           className={`fixed bottom-6 right-6 z-[100] flex items-center gap-2.5 rounded-xl border px-5 py-3.5 text-sm font-medium shadow-lg backdrop-blur ${
             toast.isError
               ? 'border-red-500/40 bg-red-500/15 text-red-300'
-              : 'border-brand/40 bg-brand/15 text-brand-light'
+              : 'border-emerald-500/40 bg-emerald-500/15 text-emerald-300'
           }`}
         >
           {toast.isError ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
