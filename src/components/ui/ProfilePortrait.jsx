@@ -6,7 +6,6 @@ export default function ProfilePortrait({
   src,
   alt = '',
   widthClass = 'w-[300px] sm:w-[360px] lg:w-[420px]',
-  float = false,
 }) {
   return (
     <div className={`relative ${widthClass} ${src ? '' : 'aspect-square'}`}>
@@ -21,8 +20,9 @@ export default function ProfilePortrait({
         }}
       />
 
-      {/* Big glowing blue disc behind the figure */}
-      <div className="absolute left-1/2 top-1/2 h-[82%] w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b from-brand to-brand-dark shadow-glow" />
+      {/* Big glowing blue disc behind the figure — width-based square so it
+          stays a perfect circle regardless of the uploaded photo's aspect ratio */}
+      <div className="absolute left-1/2 top-1/2 aspect-square w-[82%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-b from-brand to-brand-dark shadow-glow" />
 
       {/* Portrait photo (only when one is set) */}
       {src && (
@@ -30,9 +30,7 @@ export default function ProfilePortrait({
           src={src}
           alt={alt}
           draggable={false}
-          className={`relative z-10 w-full select-none object-contain ${
-            float ? 'animate-float' : ''
-          }`}
+          className="relative z-10 w-full select-none object-contain"
         />
       )}
     </div>
