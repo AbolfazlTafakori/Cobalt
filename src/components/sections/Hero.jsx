@@ -73,7 +73,7 @@ export default function Hero() {
           {/* ---- Right: portrait ---- */}
           {/* Bottom-aligned so the figure reaches down toward the stats bar,
               matching the design; larger on desktop for a taller presence. */}
-          <div className="animate-fade-up flex justify-center [animation-delay:150ms] lg:-mb-10 lg:self-end">
+          <div className="animate-fade-up flex justify-center [animation-delay:150ms] lg:-mb-6 lg:-translate-y-5 lg:self-end">
             <ProfilePortrait
               src={avatar}
               alt={`${profile.firstName} ${profile.lastName}`}

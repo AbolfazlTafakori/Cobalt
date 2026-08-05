@@ -40,6 +40,12 @@ export default function ProfilePortrait({
           }}
         />
       )}
+
+      {/* Bottom scrim: fades the base of the figure AND the disc into the
+          section background so nothing behind them shows through */}
+      {src && (
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-1/3 bg-gradient-to-b from-transparent to-ink-800" />
+      )}
     </div>
   );
 }
