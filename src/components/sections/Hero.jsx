@@ -71,17 +71,19 @@ export default function Hero() {
           </div>
 
           {/* ---- Right: portrait ---- */}
-          <div className="animate-fade-up flex justify-center lg:justify-center [animation-delay:150ms]">
+          {/* Bottom-aligned so the figure reaches down toward the stats bar,
+              matching the design; larger on desktop for a taller presence. */}
+          <div className="animate-fade-up flex justify-center [animation-delay:150ms] lg:-mb-10 lg:self-end">
             <ProfilePortrait
               src={avatar}
               alt={`${profile.firstName} ${profile.lastName}`}
-              widthClass="w-[320px] sm:w-[380px] lg:w-[440px]"
+              widthClass="w-[320px] sm:w-[400px] lg:w-[500px]"
             />
           </div>
         </div>
 
         {/* ---- Stats bar ---- */}
-        <StatsBar className="animate-fade-up mt-16 [animation-delay:300ms] lg:mt-20" />
+        <StatsBar className="animate-fade-up mt-12 [animation-delay:300ms] lg:mt-8" />
       </div>
     </section>
   );
