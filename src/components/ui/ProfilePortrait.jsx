@@ -34,9 +34,9 @@ export default function ProfilePortrait({
           style={{
             // Soft fade at the bottom so the figure melts into the section
             maskImage:
-              'linear-gradient(to bottom, #000 82%, transparent 100%)',
+              'linear-gradient(to bottom, #000 92%, transparent 100%)',
             WebkitMaskImage:
-              'linear-gradient(to bottom, #000 82%, transparent 100%)',
+              'linear-gradient(to bottom, #000 92%, transparent 100%)',
           }}
         />
       )}
