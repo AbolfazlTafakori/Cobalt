@@ -30,7 +30,7 @@ export default function ProfilePortrait({
           src={src}
           alt={alt}
           draggable={false}
-          className="relative z-10 w-full select-none object-contain"
+          className="relative z-10 w-full -translate-y-[6%] select-none object-contain"
           style={{
             // Soft fade at the bottom so the figure melts into the section
             maskImage:
@@ -39,12 +39,6 @@ export default function ProfilePortrait({
               'linear-gradient(to bottom, #000 82%, transparent 100%)',
           }}
         />
-      )}
-
-      {/* Bottom scrim: fades the base of the figure AND the disc into the
-          section background so nothing behind them shows through */}
-      {src && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-1/3 bg-gradient-to-b from-transparent to-ink-800" />
       )}
     </div>
   );
