@@ -70,12 +70,13 @@ export default function About() {
               src={avatar}
               alt={`${profile.firstName} ${profile.lastName}`}
               widthClass="w-[300px] sm:w-[360px] lg:w-[400px]"
+              discClass="w-[88%]"
             />
           </div>
         </div>
 
         {/* ---- Stats ---- */}
-        <StatsBar className="mt-16 lg:mt-20" />
+        <StatsBar className="mt-8 lg:mt-10" />
 
         {/* ---- Journey + Drives cards ---- */}
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
