@@ -7,6 +7,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useContent } from '../../content/ContentContext';
+import { uploadUrl } from '../../admin/api';
 import ProjectThumb from '../ui/ProjectThumb';
 
 const statIcons = {
@@ -76,7 +77,11 @@ export default function Projects() {
               <div className="flex flex-1 flex-col gap-5 sm:flex-row">
                 {/* thumbnail */}
                 <div className="sm:w-2/5">
-                  <ProjectThumb title={project.title} gradient={project.gradient} />
+                  <ProjectThumb
+                    title={project.title}
+                    gradient={project.gradient}
+                    image={project.image ? uploadUrl(project.image) : undefined}
+                  />
                 </div>
 
                 {/* content */}

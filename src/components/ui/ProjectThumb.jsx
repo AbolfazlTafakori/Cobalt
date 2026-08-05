@@ -1,6 +1,17 @@
-// Placeholder project thumbnail styled as a small app window.
-// Swap this out for a real <img> screenshot per project later.
-export default function ProjectThumb({ title, gradient }) {
+// Project thumbnail: shows the uploaded screenshot when one is set,
+// otherwise a gradient placeholder styled as a small app window.
+export default function ProjectThumb({ title, gradient, image }) {
+  if (image) {
+    return (
+      <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl">
+        <img
+          src={image}
+          alt={title}
+          className="h-full w-full object-cover"
+        />
+      </div>
+    );
+  }
   return (
     <div
       className={`relative flex aspect-[4/3] w-full flex-col overflow-hidden rounded-xl bg-gradient-to-br ${gradient}`}
