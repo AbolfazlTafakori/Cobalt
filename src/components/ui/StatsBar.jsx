@@ -6,7 +6,7 @@ export default function StatsBar({ className = '' }) {
   const stats = content.stats;
   return (
     <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}
+      className={`rounded-2xl border border-white/10 bg-ink-800/70 backdrop-blur-xl ${className}`}
     >
       <dl className="grid grid-cols-2 divide-white/10 lg:grid-cols-4 lg:divide-x">
         {stats.map((stat, i) => (
