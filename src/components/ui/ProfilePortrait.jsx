@@ -31,6 +31,13 @@ export default function ProfilePortrait({
           alt={alt}
           draggable={false}
           className="relative z-10 w-full select-none object-contain"
+          style={{
+            // Soft fade at the bottom so the figure melts into the section
+            maskImage:
+              'linear-gradient(to bottom, #000 82%, transparent 100%)',
+            WebkitMaskImage:
+              'linear-gradient(to bottom, #000 82%, transparent 100%)',
+          }}
         />
       )}
     </div>

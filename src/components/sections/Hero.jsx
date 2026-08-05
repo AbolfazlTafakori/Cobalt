@@ -77,7 +77,7 @@ export default function Hero() {
             <ProfilePortrait
               src={avatar}
               alt={`${profile.firstName} ${profile.lastName}`}
-              widthClass="w-[320px] sm:w-[400px] lg:w-[500px]"
+              widthClass="w-[320px] sm:w-[400px] lg:w-[540px]"
             />
           </div>
         </div>
