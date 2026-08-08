@@ -89,7 +89,7 @@ export default function About() {
                 const Icon = journeyIcons[item.icon] ?? Briefcase;
                 const isLast = i === about.journey.length - 1;
                 return (
-                  <li key={item.title} className="relative flex gap-5">
+                  <li key={i} className="relative flex gap-5">
                     {/* icon + connector */}
                     <div className="relative flex flex-col items-center">
                       <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-brand">

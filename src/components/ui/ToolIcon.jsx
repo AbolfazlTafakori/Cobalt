@@ -27,6 +27,9 @@ import {
   SiTelegram,
 } from 'react-icons/si';
 import { TbBrandVscode } from 'react-icons/tb';
+// SQL Server has no brand mark in react-icons, so it borrows a generic
+// database glyph in its own brand red.
+import { Database } from 'lucide-react';
 
 // Brand logo + official brand color for each tool tile. A few brands are
 // near-black (JWT, Next.js) or very dark (SQLite) and would disappear on the
@@ -35,6 +38,7 @@ const toolMap = {
   // ---- Backend / platform ----
   csharp: { Icon: SiSharp, color: '#8A5FD6' },
   dotnet: { Icon: SiDotnet, color: '#512BD4' },
+  sqlserver: { Icon: Database, color: '#E4565B' },
   sqlite: { Icon: SiSqlite, color: '#0F80CC' },
   postgresql: { Icon: SiPostgresql, color: '#4169E1' },
   nginx: { Icon: SiNginx, color: '#009639' },
