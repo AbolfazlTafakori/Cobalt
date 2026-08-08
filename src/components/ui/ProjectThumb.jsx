@@ -3,7 +3,7 @@
 export default function ProjectThumb({ title, gradient, image }) {
   if (image) {
     return (
-      <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl">
+      <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl">
         <img
           src={image}
           alt={title}
@@ -14,7 +14,7 @@ export default function ProjectThumb({ title, gradient, image }) {
   }
   return (
     <div
-      className={`relative flex aspect-[16/9] w-full flex-col overflow-hidden rounded-xl bg-gradient-to-br ${gradient}`}
+      className={`relative flex aspect-[16/10] w-full flex-col overflow-hidden rounded-xl bg-gradient-to-br ${gradient}`}
     >
       {/* window chrome */}
       <div className="flex items-center gap-1.5 px-3 py-2.5">
