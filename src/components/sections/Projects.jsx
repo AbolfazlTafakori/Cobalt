@@ -76,7 +76,7 @@ export default function Projects() {
             >
               <div className="flex flex-1 flex-col gap-5 sm:flex-row">
                 {/* thumbnail */}
-                <div className="sm:w-2/5">
+                <div className="sm:w-[46%]">
                   <ProjectThumb
                     title={project.title}
                     gradient={project.gradient}
