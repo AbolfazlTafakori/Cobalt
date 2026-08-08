@@ -24,6 +24,9 @@ export const uploadUrl = (filename) =>
 // Thrown on 401 so callers can bounce to the login screen.
 export class AuthError extends Error {}
 
+// Thrown on 409 when the document changed since this page loaded it.
+export class ConflictError extends Error {}
+
 async function request(path, { method = 'GET', body, auth = true } = {}) {
   const headers = {};
   if (auth) headers.Authorization = `Bearer ${getToken()}`;
@@ -38,6 +41,15 @@ async function request(path, { method = 'GET', body, auth = true } = {}) {
   if (res.status === 401) {
     clearToken();
     throw new AuthError('Session expired — please log in again');
+  }
+  if (res.status === 409) {
+    let message = 'Someone else saved while this page was open.';
+    try {
+      message = (await res.json())?.message || message;
+    } catch {
+      /* keep the fallback */
+    }
+    throw new ConflictError(message);
   }
   if (!res.ok) {
     let detail = '';

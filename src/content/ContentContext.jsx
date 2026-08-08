@@ -76,7 +76,14 @@ export function ContentProvider({ children }) {
           [key]: typeof updater === 'function' ? updater(prev[key]) : updater,
         })),
       // Persist the current (or given) content to the backend (admin only).
-      save: (next) => putContent(next ?? content),
+      // The response carries the new revision; adopt it so the next save from
+      // this tab isn't rejected as a conflict with our own write.
+      save: async (next) => {
+        const saved = await putContent(next ?? content);
+        if (saved?._rev !== undefined)
+          setContent((prev) => ({ ...prev, _rev: saved._rev }));
+        return saved;
+      },
     }),
     [content, loading],
   );

@@ -83,8 +83,16 @@ api.MapGet("/content", (DataStore db) => Results.Ok(db.GetContent()));
 
 api.MapPut("/content", (JsonNode body, DataStore db) =>
 {
-    db.SaveContent(body);
-    return Results.Ok(body);
+    var result = db.SaveContent(body);
+    if (!result.Ok)
+        return Results.Conflict(new
+        {
+            message = "This page was loaded before another save went through. "
+                    + "Reload to pick up the latest content, then redo your changes.",
+            currentRev = result.Rev,
+        });
+
+    return Results.Ok(result.Doc);
 }).RequireAuthorization();
 
 // ============================================================

@@ -59,6 +59,12 @@ public class DataStore
     }
 
     // ---- Site content document ----
+
+    // Revision counter stored alongside the content. Every admin page holds the
+    // whole document in memory and saves all of it, so without this a tab that
+    // was loaded before someone else's save would silently overwrite their work.
+    public const string RevKey = "_rev";
+
     public JsonNode GetContent()
     {
         lock (_gate)
@@ -68,11 +74,49 @@ public class DataStore
         }
     }
 
-    public void SaveContent(JsonNode content)
+    public record SaveResult(bool Ok, long Rev, JsonNode? Doc);
+
+    // Writes the document only if the caller's revision still matches the stored
+    // one. A body with no revision is accepted as-is, so older clients and the
+    // restore path keep working.
+    public SaveResult SaveContent(JsonNode content)
     {
         lock (_gate)
         {
-            File.WriteAllText(_contentFile, content.ToJsonString(JsonOpts));
+            var storedRev = CurrentRev();
+            var incoming = content as JsonObject ?? new JsonObject();
+
+            if (incoming[RevKey] is JsonNode sent && TryReadRev(sent, out var clientRev)
+                && clientRev != storedRev)
+            {
+                return new SaveResult(false, storedRev, null);
+            }
+
+            var nextRev = storedRev + 1;
+            incoming[RevKey] = nextRev;
+            File.WriteAllText(_contentFile, incoming.ToJsonString(JsonOpts));
+            return new SaveResult(true, nextRev, incoming);
+        }
+    }
+
+    // Caller must hold _gate.
+    private long CurrentRev()
+    {
+        var root = ReadContentObject();
+        return root[RevKey] is JsonNode n && TryReadRev(n, out var rev) ? rev : 0;
+    }
+
+    private static bool TryReadRev(JsonNode node, out long rev)
+    {
+        try
+        {
+            rev = node.GetValue<long>();
+            return true;
+        }
+        catch
+        {
+            rev = 0;
+            return false;
         }
     }
 
@@ -96,7 +140,7 @@ public class DataStore
             foreach (var kv in patch)
                 section[kv.Key] = kv.Value?.DeepClone();
             root[key] = section;
-            File.WriteAllText(_contentFile, root.ToJsonString(JsonOpts));
+            WriteContentObject(root);
             return section;
         }
     }
@@ -107,7 +151,7 @@ public class DataStore
         {
             var root = ReadContentObject();
             root[key] = value.DeepClone();
-            File.WriteAllText(_contentFile, root.ToJsonString(JsonOpts));
+            WriteContentObject(root);
         }
     }
 
@@ -115,6 +159,16 @@ public class DataStore
     {
         var text = File.ReadAllText(_contentFile);
         return JsonNode.Parse(text) as JsonObject ?? new JsonObject();
+    }
+
+    // Every write to content.json goes through here so the revision always
+    // moves forward — otherwise a tab loaded before a section-level write could
+    // still save over it.
+    private void WriteContentObject(JsonObject root)
+    {
+        var rev = root[RevKey] is JsonNode n && TryReadRev(n, out var r) ? r : 0;
+        root[RevKey] = rev + 1;
+        File.WriteAllText(_contentFile, root.ToJsonString(JsonOpts));
     }
 
     // ---- Auth account ----
@@ -226,9 +280,12 @@ public class DataStore
     {
         lock (_gate)
         {
-            // Validate it parses before committing.
-            JsonNode.Parse(json);
-            File.WriteAllText(_contentFile, json);
+            // Validate it parses before committing, then bump the revision so
+            // any admin tab open across the restore is forced to reload.
+            var restored = JsonNode.Parse(json) as JsonObject ?? new JsonObject();
+            var currentRev = CurrentRev();
+            restored[RevKey] = currentRev + 1;
+            File.WriteAllText(_contentFile, restored.ToJsonString(JsonOpts));
         }
     }
 }
