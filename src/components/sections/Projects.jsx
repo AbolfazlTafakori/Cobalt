@@ -94,16 +94,6 @@ export default function Projects() {
                 {/* content */}
                 <div className="flex flex-1 flex-col">
                   <h3 className="text-lg font-bold">{project.title}</h3>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {project.tags.map((tag, ti) => (
-                      <span
-                        key={ti}
-                        className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
                   <ClampedText
                     text={project.description}
                     onExpand={() => setOverview(project)}
@@ -111,8 +101,20 @@ export default function Projects() {
                 </div>
               </div>
 
+              {/* tags — full card width, so they line up under the thumbnail */}
+              <div className="mt-5 flex flex-wrap gap-2">
+                {project.tags.map((tag, ti) => (
+                  <span
+                    key={ti}
+                    className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300"
+                  >
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
               {/* buttons */}
-              <div className="mt-5 flex gap-3">
+              <div className="mt-4 flex gap-3">
                 <a
                   href={project.caseStudy}
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
