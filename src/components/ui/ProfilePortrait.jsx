@@ -2,11 +2,17 @@
 // a field of tiny blue dots framing the figure, a large blue glowing disc,
 // and (optionally) the portrait photo on top. When no photo is set, only the
 // disc + dots show. Everything scales with `widthClass`.
+// `photoClass` sizes the figure independently of the disc and the dots. The
+// rendered width is the container width no matter how many pixels the file
+// has, so a photo cropped tight to the subject needs a smaller value than one
+// exported with transparent margin around it. At 85% the current portrait
+// lands just inside the disc instead of overhanging it.
 export default function ProfilePortrait({
   src,
   alt = '',
   widthClass = 'w-[300px] sm:w-[360px] lg:w-[420px]',
   discClass = 'w-[82%]',
+  photoClass = 'w-[85%]',
 }) {
   return (
     <div className={`relative ${widthClass} ${src ? '' : 'aspect-square'}`}>
@@ -31,7 +37,7 @@ export default function ProfilePortrait({
           src={src}
           alt={alt}
           draggable={false}
-          className="relative z-10 w-full -translate-y-[6%] select-none object-contain"
+          className={`relative z-10 mx-auto -translate-y-[6%] select-none object-contain ${photoClass}`}
           style={{
             // Soft fade at the bottom so the figure melts into the section
             maskImage:
