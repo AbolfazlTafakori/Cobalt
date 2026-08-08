@@ -40,8 +40,8 @@ export default function About() {
             </h2>
 
             <div className="mx-auto mt-6 max-w-xl space-y-3 text-base leading-relaxed text-slate-400 lg:mx-0 lg:text-lg">
-              {about.paragraphs.map((p) => (
-                <p key={p}>{p}</p>
+              {about.paragraphs.map((p, i) => (
+                <p key={i}>{p}</p>
               ))}
             </div>
 
@@ -125,15 +125,15 @@ export default function About() {
             </div>
 
             <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-400">
-              {about.drives.map((p) => (
-                <p key={p}>{p}</p>
+              {about.drives.map((p, i) => (
+                <p key={i}>{p}</p>
               ))}
             </div>
 
             <div className="mt-7 flex flex-wrap gap-3">
-              {about.tags.map((tag) => (
+              {about.tags.map((tag, i) => (
                 <span
-                  key={tag}
+                  key={i}
                   className="rounded-full border border-brand/30 bg-brand/[0.07] px-4 py-2 text-sm font-medium text-brand"
                 >
                   {tag}

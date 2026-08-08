@@ -93,8 +93,8 @@ export default function Contact() {
           <div className="mt-10">
             <h3 className="text-sm font-semibold">Connect With Me</h3>
             <div className="mt-4 flex items-center gap-4">
-              {socials.map((s) => (
-                <SocialButton key={s.label} {...s} />
+              {socials.map((s, i) => (
+                <SocialButton key={i} {...s} />
               ))}
             </div>
           </div>

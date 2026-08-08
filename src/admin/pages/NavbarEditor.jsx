@@ -32,7 +32,7 @@ export default function NavbarEditor() {
         <div className="space-y-4">
           {nav.links.map((link, i) => (
             <Field
-              key={link.to}
+              key={i}
               label={`Link ${i + 1} (${link.to})`}
               value={link.label}
               onChange={setLinkLabel(i)}

@@ -54,11 +54,11 @@ export default function Skills() {
 
         {/* ---- Skill category cards ---- */}
         <div className="relative z-20 -mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-5 lg:-mt-[52px]">
-          {skills.categories.map((cat) => {
+          {skills.categories.map((cat, ci) => {
             const Icon = categoryIcons[cat.icon] ?? Code2;
             return (
               <div
-                key={cat.title}
+                key={ci}
                 className="rounded-2xl border border-white/10 bg-ink-700 p-6 transition-colors hover:border-brand/30"
               >
                 <div className="flex items-center gap-3">
@@ -75,8 +75,8 @@ export default function Skills() {
                 </p>
 
                 <div className="mt-6 space-y-4">
-                  {cat.items.map((item) => (
-                    <SkillBar key={item.name} {...item} />
+                  {cat.items.map((item, ii) => (
+                    <SkillBar key={ii} {...item} />
                   ))}
                 </div>
               </div>
@@ -88,9 +88,9 @@ export default function Skills() {
         <div className="mt-10">
           <h2 className="text-2xl font-bold sm:text-3xl">Tools &amp; Technologies</h2>
           <div className="mt-8 grid grid-cols-3 gap-5 sm:grid-cols-4 lg:grid-cols-6 xl:grid-cols-12">
-            {skills.tools.map((tool) => (
+            {skills.tools.map((tool, ti) => (
               <div
-                key={tool.name}
+                key={ti}
                 className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 transition-all hover:-translate-y-1 hover:border-brand/30"
               >
                 <ToolIcon icon={tool.icon} />

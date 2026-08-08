@@ -11,7 +11,7 @@ export default function StatsBar({ className = '' }) {
       <dl className="grid grid-cols-2 divide-white/10 lg:grid-cols-4 lg:divide-x">
         {stats.map((stat, i) => (
           <div
-            key={stat.label}
+            key={i}
             className={`px-6 py-11 text-center sm:py-12 ${
               i < 2 ? 'border-b border-white/10 lg:border-b-0' : ''
             } ${i % 2 === 1 ? 'border-l border-white/10 lg:border-l' : ''}`}

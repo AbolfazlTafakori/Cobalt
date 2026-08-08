@@ -47,8 +47,8 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         {/* Desktop nav links */}
         <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-9 lg:flex">
-          {navLinks.map((link) => (
-            <li key={link.to}>
+          {navLinks.map((link, i) => (
+            <li key={i}>
               <NavLink to={link.to} end={link.to === '/'} className={linkClass}>
                 {({ isActive }) => (
                   <>
@@ -99,8 +99,8 @@ export default function Navbar({ theme, onToggleTheme }) {
       {mobileOpen && (
         <div className="border-t border-white/5 bg-ink-900/95 backdrop-blur-lg lg:hidden">
           <ul className="container-page flex flex-col py-4">
-            {navLinks.map((link) => (
-              <li key={link.to}>
+            {navLinks.map((link, i) => (
+              <li key={i}>
                 <NavLink
                   to={link.to}
                   end={link.to === '/'}

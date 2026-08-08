@@ -48,10 +48,10 @@ export default function Projects() {
 
           {/* Stats */}
           <div className="grid grid-cols-2 gap-6 sm:grid-cols-4 lg:grid-cols-4">
-            {projects.stats.map((stat) => {
+            {projects.stats.map((stat, i) => {
               const Icon = statIcons[stat.icon] ?? FolderKanban;
               return (
-                <div key={stat.label} className="text-center">
+                <div key={i} className="text-center">
                   <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-white/10 text-slate-200">
                     <Icon size={22} />
                   </span>
@@ -69,9 +69,9 @@ export default function Projects() {
 
         {/* ---- Project cards ---- */}
         <div className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-3 lg:mt-16">
-          {projects.items.map((project) => (
+          {projects.items.map((project, i) => (
             <article
-              key={project.title}
+              key={i}
               className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-brand/30"
             >
               <div className="flex flex-1 flex-col gap-5 sm:flex-row">
@@ -88,9 +88,9 @@ export default function Projects() {
                 <div className="flex flex-1 flex-col">
                   <h3 className="text-lg font-bold">{project.title}</h3>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {project.tags.map((tag) => (
+                    {project.tags.map((tag, ti) => (
                       <span
-                        key={tag}
+                        key={ti}
                         className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300"
                       >
                         {tag}

@@ -64,8 +64,8 @@ export default function Hero() {
 
             {/* Socials */}
             <div className="mt-8 flex items-center justify-center gap-4 lg:justify-start">
-              {socials.map((s) => (
-                <SocialButton key={s.label} {...s} />
+              {socials.map((s, i) => (
+                <SocialButton key={i} {...s} />
               ))}
             </div>
           </div>
