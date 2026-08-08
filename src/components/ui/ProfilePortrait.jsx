@@ -5,14 +5,14 @@
 // `photoClass` sizes the figure independently of the disc and the dots. The
 // rendered width is the container width no matter how many pixels the file
 // has, so a photo cropped tight to the subject needs a smaller value than one
-// exported with transparent margin around it. At 80% the current portrait sits
-// comfortably inside the disc instead of overhanging it.
+// exported with transparent margin around it. At 75% the current portrait sits
+// well inside the disc instead of overhanging it.
 export default function ProfilePortrait({
   src,
   alt = '',
   widthClass = 'w-[300px] sm:w-[360px] lg:w-[420px]',
   discClass = 'w-[82%]',
-  photoClass = 'w-[80%]',
+  photoClass = 'w-[75%]',
 }) {
   return (
     <div className={`relative ${widthClass} ${src ? '' : 'aspect-square'}`}>
