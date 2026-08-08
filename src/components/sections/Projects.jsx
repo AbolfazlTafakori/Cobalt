@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   FileText,
   ExternalLink,
@@ -9,6 +10,8 @@ import {
 import { useContent } from '../../content/ContentContext';
 import { uploadUrl } from '../../admin/api';
 import ProjectThumb from '../ui/ProjectThumb';
+import ClampedText from '../ui/ClampedText';
+import OverviewModal from '../ui/OverviewModal';
 
 const statIcons = {
   folder: FolderKanban,
@@ -20,6 +23,8 @@ const statIcons = {
 export default function Projects() {
   const { content } = useContent();
   const { projects } = content;
+  // Project whose full description is showing in the dialog, if any.
+  const [overview, setOverview] = useState(null);
   return (
     <section
       id="projects"
@@ -68,7 +73,9 @@ export default function Projects() {
         </div>
 
         {/* ---- Project cards ---- */}
-        <div className="mt-14 grid gap-7 md:grid-cols-2 xl:grid-cols-3 lg:mt-16">
+        {/* auto-rows-fr keeps every card the same height, so the clamped
+            descriptions line up across rows as well as within one. */}
+        <div className="mt-14 grid auto-rows-fr gap-7 md:grid-cols-2 xl:grid-cols-3 lg:mt-16">
           {projects.items.map((project, i) => (
             <article
               key={i}
@@ -97,9 +104,10 @@ export default function Projects() {
                       </span>
                     ))}
                   </div>
-                  <p className="mt-3 text-sm leading-relaxed text-slate-400">
-                    {project.description}
-                  </p>
+                  <ClampedText
+                    text={project.description}
+                    onExpand={() => setOverview(project)}
+                  />
                 </div>
               </div>
 
@@ -124,6 +132,14 @@ export default function Projects() {
           ))}
         </div>
       </div>
+
+      {overview && (
+        <OverviewModal
+          title={overview.title}
+          text={overview.description}
+          onClose={() => setOverview(null)}
+        />
+      )}
     </section>
   );
 }

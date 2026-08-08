@@ -40,10 +40,20 @@ export default {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-14px)' },
         },
+        'fade-in': {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        'pop-in': {
+          '0%': { opacity: '0', transform: 'translateY(12px) scale(0.97)' },
+          '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.7s ease-out both',
         float: 'float 6s ease-in-out infinite',
+        'fade-in': 'fade-in 0.2s ease-out both',
+        'pop-in': 'pop-in 0.25s ease-out both',
       },
     },
   },
