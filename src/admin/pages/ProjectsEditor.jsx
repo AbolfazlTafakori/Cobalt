@@ -4,6 +4,7 @@ import { uploadFile, uploadUrl } from '../api';
 import { useToast } from '../components/Toast';
 import { PageHeader, Card, Field, Row } from '../components/ui';
 import { StringListEditor, ListItemBlock, AddItemButton } from '../components/editors';
+import { StatSourceField, GithubStatsStatus } from '../components/StatSource';
 import ImageUpload from '../components/ImageUpload';
 import SaveBar from '../components/SaveBar';
 
@@ -61,12 +62,14 @@ export default function ProjectsEditor() {
       </Card>
 
       <Card title="Stats">
+        <GithubStatsStatus />
         <div className="space-y-3">
           {projects.stats.map((s, i) => (
-            <div key={i} className="grid gap-3 sm:grid-cols-3">
+            <div key={i} className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               <Field label="Value" value={s.value} onChange={setStat(i, 'value')} />
               <Field label="Label" value={s.label} onChange={setStat(i, 'label')} />
               <Field label="Icon (folder/code/users/calendar)" value={s.icon} onChange={setStat(i, 'icon')} />
+              <StatSourceField value={s.source} onChange={setStat(i, 'source')} />
             </div>
           ))}
         </div>

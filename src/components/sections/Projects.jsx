@@ -8,6 +8,7 @@ import {
   Calendar,
 } from 'lucide-react';
 import { useContent } from '../../content/ContentContext';
+import { useGithubStats, statValue } from '../../content/githubStats';
 import { uploadUrl } from '../../admin/api';
 import ProjectThumb from '../ui/ProjectThumb';
 import ClampedText from '../ui/ClampedText';
@@ -23,6 +24,7 @@ const statIcons = {
 export default function Projects() {
   const { content } = useContent();
   const { projects } = content;
+  const { stats: live } = useGithubStats();
   // Project whose full description is showing in the dialog, if any.
   const [overview, setOverview] = useState(null);
   return (
@@ -61,7 +63,7 @@ export default function Projects() {
                     <Icon size={22} />
                   </span>
                   <p className="mt-3 text-2xl font-bold text-brand sm:text-3xl">
-                    {stat.value}
+                    {statValue(stat, live)}
                   </p>
                   <p className="mt-1 text-xs text-slate-400 sm:text-sm">
                     {stat.label}

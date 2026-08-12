@@ -1,6 +1,7 @@
 import { useContent } from '../../content/ContentContext';
 import { PageHeader, Card, Field, Row } from '../components/ui';
 import { ListItemBlock, AddItemButton } from '../components/editors';
+import { StatSourceField, GithubStatsStatus } from '../components/StatSource';
 import SaveBar from '../components/SaveBar';
 
 export default function HomeStats() {
@@ -21,13 +22,17 @@ export default function HomeStats() {
       <PageHeader title="Home — Stats Bar" subtitle="The numbers shown under the hero" />
 
       <Card title="Stats">
+        <GithubStatsStatus />
         <div className="space-y-4">
           {stats.map((s, i) => (
             <ListItemBlock key={i} index={i} onRemove={() => remove(i)}>
-              <Row>
-                <Field label="Value" value={s.value} onChange={setStat(i, 'value')} placeholder="+10" />
-                <Field label="Label" value={s.label} onChange={setStat(i, 'label')} placeholder="Projects Completed" />
-              </Row>
+              <div className="space-y-4">
+                <Row>
+                  <Field label="Value" value={s.value} onChange={setStat(i, 'value')} placeholder="+10" />
+                  <Field label="Label" value={s.label} onChange={setStat(i, 'label')} placeholder="Projects Completed" />
+                </Row>
+                <StatSourceField value={s.source} onChange={setStat(i, 'source')} />
+              </div>
             </ListItemBlock>
           ))}
         </div>

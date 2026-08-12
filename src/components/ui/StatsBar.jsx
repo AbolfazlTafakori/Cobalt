@@ -1,9 +1,11 @@
 import { useContent } from '../../content/ContentContext';
+import { useGithubStats, statValue } from '../../content/githubStats';
 
 // Shared stats strip used on both the Home hero and the About section.
 export default function StatsBar({ className = '' }) {
   const { content } = useContent();
   const stats = content.stats;
+  const { stats: live } = useGithubStats();
   return (
     <div
       className={`rounded-2xl border border-white/10 bg-ink-800/70 backdrop-blur-xl ${className}`}
@@ -17,7 +19,7 @@ export default function StatsBar({ className = '' }) {
             } ${i % 2 === 1 ? 'border-l border-white/10 lg:border-l' : ''}`}
           >
             <dt className="text-4xl font-bold text-brand sm:text-5xl">
-              {stat.value}
+              {statValue(stat, live)}
             </dt>
             <dd className="mt-2.5 text-sm text-slate-400 sm:text-base">
               {stat.label}
