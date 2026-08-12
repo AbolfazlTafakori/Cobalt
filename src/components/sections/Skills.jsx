@@ -32,11 +32,11 @@ export default function Skills() {
         {/* ---- Header row ---- */}
         <div className="grid items-start gap-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           <div className="text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
               {skills.badge}
             </span>
             <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-              My <span className="text-accent">Skills</span>
+              My <span className="text-brand">Skills</span>
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {skills.intro}
@@ -62,7 +62,7 @@ export default function Skills() {
                 className="rounded-2xl border border-edge/10 bg-card shadow-card p-6 transition-all hover:border-brand/30 hover:shadow-card-hover"
               >
                 <div className="flex items-center gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-brand/40 bg-brand/10 text-accent">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-brand/40 bg-brand/10 text-brand">
                     <Icon size={20} />
                   </span>
                   <h3 className="text-[15px] font-semibold leading-tight">

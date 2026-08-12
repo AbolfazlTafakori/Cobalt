@@ -17,7 +17,7 @@ export default function MapPlaceholder() {
       {/* diagonal avenue */}
       <div className="absolute -inset-8 rotate-12 border-t-2 border-edge/25" />
       {/* centered pin */}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-accent">
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-brand">
         <MapPin size={30} fill="currentColor" className="drop-shadow" />
       </div>
     </div>

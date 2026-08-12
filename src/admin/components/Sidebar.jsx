@@ -20,7 +20,7 @@ export default function Sidebar({ onNavigate }) {
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
       isActive
-        ? 'bg-brand/15 font-medium text-accent'
+        ? 'bg-brand/15 font-medium text-brand'
         : 'text-slate-400 hover:bg-white/5 hover:text-white'
     }`;
 

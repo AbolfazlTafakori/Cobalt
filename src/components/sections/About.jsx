@@ -30,13 +30,13 @@ export default function About() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           {/* Left copy */}
           <div className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
               <User size={15} />
               {about.badge}
             </span>
 
             <h2 className="mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              About <span className="text-accent">{profile.firstName} {profile.lastName}</span>
+              About <span className="text-brand">{profile.firstName} {profile.lastName}</span>
             </h2>
 
             <div className="mx-auto mt-6 max-w-xl space-y-3 text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
@@ -92,7 +92,7 @@ export default function About() {
                   <li key={i} className="relative flex gap-5">
                     {/* icon + connector */}
                     <div className="relative flex flex-col items-center">
-                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-accent">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-brand">
                         <Icon size={22} />
                       </span>
                       {!isLast && (
@@ -102,7 +102,7 @@ export default function About() {
 
                     <div className="pb-1">
                       <h4 className="text-lg font-semibold">{item.title}</h4>
-                      <p className="mt-1 text-sm font-medium text-accent">
+                      <p className="mt-1 text-sm font-medium text-brand">
                         {item.period}
                       </p>
                       <p className="mt-3 text-sm leading-relaxed text-fg-muted">
@@ -119,7 +119,7 @@ export default function About() {
           <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-7 sm:p-9">
             <div className="flex items-start justify-between">
               <h3 className="text-2xl font-bold">What Drives Me</h3>
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-accent">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-brand">
                 <Heart size={19} />
               </span>
             </div>
@@ -134,7 +134,7 @@ export default function About() {
               {about.tags.map((tag, i) => (
                 <span
                   key={i}
-                  className="rounded-full border border-brand/30 bg-brand/[0.07] px-4 py-2 text-sm font-medium text-accent"
+                  className="rounded-full border border-brand/30 bg-brand/[0.07] px-4 py-2 text-sm font-medium text-brand"
                 >
                   {tag}
                 </span>

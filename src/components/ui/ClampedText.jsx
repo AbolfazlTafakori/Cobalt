@@ -43,7 +43,7 @@ export default function ClampedText({ text, onExpand, label = 'See more' }) {
         <button
           type="button"
           onClick={onExpand}
-          className="mt-2 self-start text-xs font-medium text-accent underline decoration-brand/40 underline-offset-4 transition-colors hover:text-accent hover:decoration-brand"
+          className="mt-2 self-start text-xs font-medium text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:text-brand-light hover:decoration-brand"
         >
           {label}
         </button>

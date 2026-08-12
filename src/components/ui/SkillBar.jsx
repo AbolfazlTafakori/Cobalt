@@ -4,7 +4,7 @@ export default function SkillBar({ name, level }) {
     <div>
       <div className="flex items-center justify-between text-sm">
         <span className="text-fg-soft">{name}</span>
-        <span className="font-semibold text-accent">{level}%</span>
+        <span className="font-semibold text-brand">{level}%</span>
       </div>
       <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-edge/10">
         <div

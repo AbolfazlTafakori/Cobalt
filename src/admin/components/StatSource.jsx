@@ -47,7 +47,7 @@ export function StatLiveSource({ stat, onChange }) {
               </>
             ) : (
               <>
-                Showing <strong className="text-accent">{statValue(stat, live)}</strong> · falls back
+                Showing <strong className="text-brand">{statValue(stat, live)}</strong> · falls back
                 to <strong className="text-slate-300">{stat.value || '—'}</strong> when GitHub
                 can’t be reached.
               </>

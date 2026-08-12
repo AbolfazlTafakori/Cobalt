@@ -23,9 +23,6 @@ export default {
 
         // Semantic surfaces and text for the public site. These flip between
         // the dark and light themes; see the token block in index.css.
-        // Brand blue tuned for text on the current theme. No alpha channel:
-        // it is a resolved color, not a triplet (see --c-accent in index.css).
-        accent: 'var(--c-accent)',
         page: 'rgb(var(--c-page) / <alpha-value>)',
         panel: 'rgb(var(--c-panel) / <alpha-value>)',
         card: 'rgb(var(--c-card) / <alpha-value>)',

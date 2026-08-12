@@ -163,7 +163,7 @@ export function AddButton({ label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-accent transition-colors hover:border-brand hover:bg-brand/10"
+      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/10"
     >
       <Plus size={16} />
       {label}
@@ -204,7 +204,7 @@ function IconButton({ onClick, label, danger }) {
       className={`grid h-9 w-9 place-items-center rounded-lg border border-white/10 transition-colors ${
         danger
           ? 'text-red-400 hover:border-red-500/50 hover:bg-red-500/10'
-          : 'text-slate-300 hover:border-brand/40 hover:bg-brand/10 hover:text-accent'
+          : 'text-slate-300 hover:border-brand/40 hover:bg-brand/10 hover:text-brand'
       }`}
     >
       {danger ? <TrashIcon /> : <EditIcon />}

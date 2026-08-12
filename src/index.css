@@ -44,13 +44,6 @@
     --c-fg-subtle: 100 116 139;
     /* How loud the decorative dot grid and ambient glows are allowed to be. */
     --dot-opacity: 1;
-    /* Brand blue as *text*. The raw brand color is a mid-tone: it clears 4.5:1
-       against neither theme's page, and less still on the brand-tinted chips it
-       usually sits in. Lifting it toward the page's far end keeps the hue the
-       admin chose while making small text readable. The plain value first is
-       the fallback for engines without color-mix. */
-    --c-accent: rgb(var(--c-brand-light));
-    --c-accent: color-mix(in srgb, rgb(var(--c-brand-light)) 72%, white);
     /* The blurred brand discs and the glow behind the portrait. On a dark page
        they read as light; on a pale one the same strength is a smear. */
     --ambient-opacity: 1;
@@ -77,8 +70,6 @@
     /* The dots are near-black on a pale page — the same weight as the dark
        theme would read as dirt rather than texture. */
     --dot-opacity: 0.16;
-    --c-accent: rgb(var(--c-brand-dark));
-    --c-accent: color-mix(in srgb, rgb(var(--c-brand-dark)) 88%, black);
     --ambient-opacity: 0.4;
     --glow-alpha: 0.24;
   }
@@ -100,8 +91,6 @@
     --c-fg-muted: 148 163 184;
     --c-fg-subtle: 100 116 139;
     --dot-opacity: 1;
-    --c-accent: rgb(var(--c-brand-light));
-    --c-accent: color-mix(in srgb, rgb(var(--c-brand-light)) 72%, white);
   }
 
   html {

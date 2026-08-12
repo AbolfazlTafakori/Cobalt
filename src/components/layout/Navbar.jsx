@@ -31,7 +31,7 @@ export default function Navbar({ theme, onToggleTheme }) {
 
   const linkClass = ({ isActive }) =>
     `relative py-2 text-[15px] font-medium transition-colors ${
-      isActive ? 'text-accent' : 'text-fg-soft hover:text-fg'
+      isActive ? 'text-brand' : 'text-fg-soft hover:text-fg'
     }`;
 
   return (
@@ -54,7 +54,7 @@ export default function Navbar({ theme, onToggleTheme }) {
           <span className="relative">
             {/* The tile stays dark in both themes, so its lettering does too. */}
             <span className="text-white">{nav.logo.charAt(0)}</span>
-            <span className="text-brand-light">{nav.logo.slice(1)}</span>
+            <span className="text-brand">{nav.logo.slice(1)}</span>
           </span>
         </Link>
 
@@ -129,7 +129,7 @@ export default function Navbar({ theme, onToggleTheme }) {
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
                     `block rounded-lg px-3 py-3 text-[15px] font-medium transition-colors ${
-                      isActive ? 'bg-brand/10 text-accent' : 'text-fg-soft hover:bg-edge/5 hover:text-fg'
+                      isActive ? 'bg-brand/10 text-brand' : 'text-fg-soft hover:bg-edge/5 hover:text-fg'
                     }`
                   }
                 >

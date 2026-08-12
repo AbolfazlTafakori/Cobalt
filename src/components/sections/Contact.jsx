@@ -49,13 +49,13 @@ export default function Contact() {
       <div className="relative mx-auto grid w-full max-w-[1440px] gap-12 px-6 sm:px-10 lg:grid-cols-2 lg:gap-16">
         {/* ---- Left column ---- */}
         <div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
             <Send size={15} />
             {contact.badge}
           </span>
 
           <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-            Let&apos;s Work <span className="text-accent">Together</span>
+            Let&apos;s Work <span className="text-brand">Together</span>
           </h1>
           <span className="mt-5 block h-1 w-24 rounded-full bg-gradient-to-r from-brand to-brand-light" />
 
@@ -73,12 +73,12 @@ export default function Contact() {
                   href={item.href}
                   className="group flex items-center gap-4 rounded-xl border border-edge/10 bg-card shadow-card p-4 transition-all hover:border-brand/30 hover:shadow-card-hover"
                 >
-                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand/15 text-accent">
+                  <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand/15 text-brand">
                     <Icon size={20} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">{item.label}</p>
-                    <p className="truncate text-sm text-accent">{item.value}</p>
+                    <p className="truncate text-sm text-brand">{item.value}</p>
                   </div>
                   <ChevronRight
                     size={18}
@@ -152,7 +152,7 @@ export default function Contact() {
 
               {/* Always in the tree so the confirmation is announced when it
                   appears, rather than swapping the button's own label. */}
-              <p role="status" aria-live="polite" className="min-h-[1.25rem] text-sm text-accent">
+              <p role="status" aria-live="polite" className="min-h-[1.25rem] text-sm text-brand">
                 {sent && 'Thanks — your message is on its way.'}
               </p>
             </form>
@@ -162,7 +162,7 @@ export default function Contact() {
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-5">
               <div className="flex items-center gap-2">
-                <MapPin size={18} className="text-accent" />
+                <MapPin size={18} className="text-brand" />
                 <div>
                   <p className="text-sm font-semibold">My Location</p>
                   <p className="text-xs text-fg-muted">{contact.location}</p>
@@ -174,7 +174,7 @@ export default function Contact() {
             </div>
 
             <div className="flex flex-col rounded-2xl border border-edge/10 bg-card shadow-card p-6">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/15 text-accent">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/15 text-brand">
                 <Trophy size={22} />
               </span>
               <h3 className="mt-4 text-lg font-bold">{contact.cta.title}</h3>
@@ -183,7 +183,7 @@ export default function Contact() {
               </p>
               <a
                 href="#contact"
-                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-accent hover:gap-2"
+                className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-brand hover:gap-2"
               >
                 {contact.cta.linkLabel}
                 <ChevronRight size={16} />

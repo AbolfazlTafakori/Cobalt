@@ -104,7 +104,7 @@ export default function Identity() {
             Upload CV (PDF)
           </button>
           {cvName && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-accent">
+            <span className="inline-flex items-center gap-1.5 text-sm text-brand">
               <FileText size={15} /> {cvName}
             </span>
           )}

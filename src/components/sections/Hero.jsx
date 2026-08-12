@@ -27,16 +27,16 @@ export default function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           {/* ---- Left: intro copy ---- */}
           <div className="animate-fade-up text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
               {profile.greeting}
             </span>
 
             <h1 className="mt-6 whitespace-nowrap text-[clamp(1.55rem,8.5vw,2.25rem)] font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               {profile.firstName}{' '}
-              <span className="text-accent">{profile.lastName}</span>
+              <span className="text-brand">{profile.lastName}</span>
             </h1>
 
-            <p className="mt-4 text-2xl font-semibold text-accent sm:text-3xl">
+            <p className="mt-4 text-2xl font-semibold text-brand sm:text-3xl">
               {profile.role}
             </p>
 

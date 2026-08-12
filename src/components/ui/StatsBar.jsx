@@ -18,7 +18,7 @@ export default function StatsBar({ className = '' }) {
               i < 2 ? 'border-b border-edge/10 lg:border-b-0' : ''
             } ${i % 2 === 1 ? 'border-l border-edge/10 lg:border-l' : ''}`}
           >
-            <dt className="text-4xl font-bold text-accent sm:text-5xl">
+            <dt className="text-4xl font-bold text-brand sm:text-5xl">
               {statValue(stat, live)}
             </dt>
             <dd className="mt-2.5 text-sm text-fg-muted sm:text-base">

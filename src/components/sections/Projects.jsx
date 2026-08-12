@@ -42,11 +42,11 @@ export default function Projects() {
         {/* ---- Header row ---- */}
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div className="text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
               {projects.badge}
             </span>
             <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Featured <span className="text-accent">Projects</span>
+              Featured <span className="text-brand">Projects</span>
             </h1>
             <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {projects.intro}
@@ -62,7 +62,7 @@ export default function Projects() {
                   <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-edge/10 text-fg-soft">
                     <Icon size={22} />
                   </span>
-                  <p className="mt-3 text-2xl font-bold text-accent sm:text-3xl">
+                  <p className="mt-3 text-2xl font-bold text-brand sm:text-3xl">
                     {statValue(stat, live)}
                   </p>
                   <p className="mt-1 text-xs text-fg-muted sm:text-sm">
