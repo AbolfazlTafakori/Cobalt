@@ -12,14 +12,16 @@ import { useContent } from './ContentContext';
 const API = 'https://api.github.com';
 const CACHE_KEY = 'github_stats';
 
-// GitHub allows 60 unauthenticated calls an hour per IP, and behind a proxy
-// every visitor shares one budget. Six hours between refreshes keeps a busy
-// day far under the limit; the cached number is served in the meantime.
-const TTL_MS = 6 * 60 * 60 * 1000;
+// These calls leave the visitor's own browser, so GitHub's 60-an-hour
+// unauthenticated limit is spent per visitor, not pooled across the site: two
+// calls per page load is nowhere near it. The cache exists to keep a browsing
+// session from re-fetching on every route change, not to ration a shared
+// budget — so it can be short enough that the number actually tracks reality.
+const TTL_MS = 15 * 60 * 1000;
 // Search is rate limited separately and much harder, so one of the two figures
 // can fail on its own. Retry a half-empty result sooner rather than serving the
-// typed fallback for six hours over a moment of throttling.
-const PARTIAL_TTL_MS = 10 * 60 * 1000;
+// typed fallback over a moment of throttling.
+const PARTIAL_TTL_MS = 2 * 60 * 1000;
 
 // Values `stat.source` can take. Anything else (including undefined) is manual.
 const SOURCE_KEYS = { 'github-repos': 'repos', 'github-commits': 'commits' };
@@ -141,8 +143,10 @@ export function loadGithubStats(user, { fresh = false } = {}) {
 }
 
 // Live numbers for the current content, or nulls when unavailable.
-// `force` makes the admin fetch even while every stat is still manual, so the
-// owner can see what the live values would be before switching one over.
+// `force` is for the admin: it fetches even while every stat is still manual,
+// so the owner can see what the live values would be before switching one over,
+// and it skips the cache so the panel always shows what GitHub says right now
+// rather than whatever the last visit happened to store.
 export function useGithubStats({ force = false } = {}) {
   const { content } = useContent();
   const user = githubUserFromContent(content);
@@ -158,7 +162,7 @@ export function useGithubStats({ force = false } = {}) {
     if (!user || !wanted) return;
     let alive = true;
     setState((prev) => ({ ...prev, loading: true, error: '' }));
-    loadGithubStats(user)
+    loadGithubStats(user, { fresh: force })
       .then((stats) => alive && setState({ stats, loading: false, error: '' }))
       .catch((err) =>
         alive && setState({ stats: null, loading: false, error: err.message || 'GitHub is unreachable' }),
@@ -166,7 +170,7 @@ export function useGithubStats({ force = false } = {}) {
     return () => {
       alive = false;
     };
-  }, [user, wanted]);
+  }, [user, wanted, force]);
 
   return { ...state, user };
 }

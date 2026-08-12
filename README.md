@@ -72,9 +72,14 @@ The account comes from whichever **Social Links** entry points at a GitHub
 profile, so there is nothing extra to configure and no token to keep. The number
 you typed stays as the offline fallback: if GitHub is unreachable, rate limited,
 or no GitHub link is set, the site quietly shows the typed value instead of a
-blank. Results are cached for six hours, because GitHub allows 60 unauthenticated
-calls an hour and every visitor shares that budget by IP. A site with no live
-stat never calls GitHub at all.
+blank.
+
+The call is made from the visitor's own browser, so GitHub's 60-an-hour
+unauthenticated limit is spent per visitor rather than pooled across the site.
+Each browser caches the result for 15 minutes — enough to keep a browsing
+session from re-fetching on every page, short enough that the number tracks
+reality. The admin panel always reads live, so what you see there is current. A
+site with no live stat never calls GitHub at all.
 
 ### Light theme
 

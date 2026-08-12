@@ -2,6 +2,7 @@
 // stat shows the number that was typed; on, it shows a figure read from the
 // GitHub account linked under Socials — with the typed number kept as the
 // offline fallback. Shared by the Home and Projects stat editors.
+import { useRef } from 'react';
 import { Toggle, Segmented } from './ui';
 import { useGithubStats, statValue } from '../../content/githubStats';
 
@@ -15,8 +16,12 @@ const isLive = (source) => METRICS.some((m) => m.value === source);
 export function StatLiveSource({ stat, onChange }) {
   const { stats: live, user, error } = useGithubStats({ force: true });
   const on = isLive(stat.source);
-  // Turning it on lands on repositories; turning it off keeps nothing behind.
-  const setOn = (next) => onChange(next ? stat.source || METRICS[0].value : 'manual');
+  // Switching off replaces the metric with 'manual', so remember which one was
+  // chosen and hand it back on the way in — otherwise a stray click costs the
+  // setting, and reusing `stat.source` directly would just re-apply 'manual'.
+  const lastMetric = useRef(METRICS[0].value);
+  if (on) lastMetric.current = stat.source;
+  const setOn = (next) => onChange(next ? lastMetric.current : 'manual');
 
   return (
     <div className="mt-4 border-t border-white/10 pt-4">
@@ -87,7 +92,8 @@ export function GithubStatsStatus() {
   return (
     <Note>
       <strong className="text-slate-300">github.com/{user}</strong> — {fmt(stats?.repos)} public
-      repositories · {fmt(stats?.commits)} commits in {year}. Refreshed every 6 hours.
+      repositories · {fmt(stats?.commits)} commits in {year}. Read live just now; visitors see a
+      figure at most 15 minutes old.
     </Note>
   );
 }
