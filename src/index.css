@@ -28,8 +28,14 @@
     --c-page: 11 17 32;
     --c-panel: 15 23 41;
     --c-sunken: 8 11 22;
+    /* Cards. A dark UI separates a card from the page by making it lighter;
+       a light UI does the opposite and lifts it with white plus a shadow.
+       Same role, opposite mechanics — hence a token rather than one wash. */
+    --c-card: 18 24 39;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.2);
+    --shadow-card-hover: 0 1px 2px rgb(0 0 0 / 0.2);
     /* Borders and the faint surface washes are drawn in this color at low
-       alpha, so `border-edge/10` and `bg-edge/[0.03]` read correctly on both
+       alpha, so `border-edge/10` and `bg-edge/5` read correctly on both
        themes without every component branching. */
     --c-edge: 255 255 255;
     --c-fg: 255 255 255;
@@ -45,23 +51,36 @@
        the fallback for engines without color-mix. */
     --c-accent: rgb(var(--c-brand-light));
     --c-accent: color-mix(in srgb, rgb(var(--c-brand-light)) 72%, white);
+    /* The blurred brand discs and the glow behind the portrait. On a dark page
+       they read as light; on a pale one the same strength is a smear. */
+    --ambient-opacity: 1;
+    --glow-alpha: 0.45;
   }
 
   /* ---- Light theme ---- */
   html:not(.dark) {
-    --c-page: 248 250 252;
+    /* A touch of blue in the page keeps the white cards reading as cards
+       rather than as holes in a gray sheet. */
+    --c-page: 241 245 251;
     --c-panel: 255 255 255;
+    --c-card: 255 255 255;
     --c-sunken: 241 245 249;
-    --c-edge: 15 23 42;
+    --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 10px 26px -14px rgb(15 23 42 / 0.22);
+    --shadow-card-hover: 0 1px 2px rgb(15 23 42 / 0.05), 0 16px 34px -16px rgb(15 23 42 / 0.28);
+    /* Slate rather than near-black: a pure dark hairline on white reads as a
+       drawn box, and every surface here is already lifted by its shadow. */
+    --c-edge: 51 65 85;
     --c-fg: 15 23 42;
     --c-fg-soft: 51 65 85;
     --c-fg-muted: 71 85 105;
     --c-fg-subtle: 100 116 139;
     /* The dots are near-black on a pale page — the same weight as the dark
        theme would read as dirt rather than texture. */
-    --dot-opacity: 0.22;
+    --dot-opacity: 0.16;
     --c-accent: rgb(var(--c-brand-dark));
     --c-accent: color-mix(in srgb, rgb(var(--c-brand-dark)) 88%, black);
+    --ambient-opacity: 0.4;
+    --glow-alpha: 0.24;
   }
 
   /* The admin panel is a dark tool surface and does not follow the public
@@ -69,7 +88,12 @@
   .theme-dark {
     --c-page: 11 17 32;
     --c-panel: 15 23 41;
+    --c-card: 18 24 39;
     --c-sunken: 8 11 22;
+    --shadow-card: 0 1px 2px rgb(0 0 0 / 0.2);
+    --shadow-card-hover: 0 1px 2px rgb(0 0 0 / 0.2);
+    --ambient-opacity: 1;
+    --glow-alpha: 0.45;
     --c-edge: 255 255 255;
     --c-fg: 255 255 255;
     --c-fg-soft: 203 213 225;
@@ -116,6 +140,11 @@
 @layer components {
   .container-page {
     @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-8;
+  }
+
+  /* The blurred brand discs behind each section. */
+  .ambient {
+    opacity: var(--ambient-opacity);
   }
 
   /* Decorative dotted grid used near the edges of the hero */

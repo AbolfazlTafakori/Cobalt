@@ -23,7 +23,7 @@ export default function Skills() {
       className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="ambient pointer-events-none absolute inset-0">
         <div className="absolute -right-32 top-4 h-[500px] w-[500px] rounded-full bg-brand/15 blur-[120px]" />
         <div className="dot-grid absolute bottom-24 left-0 h-44 w-40 text-dot" />
       </div>
@@ -59,7 +59,7 @@ export default function Skills() {
             return (
               <div
                 key={ci}
-                className="rounded-2xl border border-edge/10 bg-panel p-6 transition-colors hover:border-brand/30"
+                className="rounded-2xl border border-edge/10 bg-card shadow-card p-6 transition-all hover:border-brand/30 hover:shadow-card-hover"
               >
                 <div className="flex items-center gap-3">
                   <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-brand/40 bg-brand/10 text-accent">
@@ -91,7 +91,7 @@ export default function Skills() {
             {skills.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className="flex flex-col items-center gap-3 rounded-2xl border border-edge/10 bg-edge/[0.03] px-3 py-6 transition-all hover:-translate-y-1 hover:border-brand/30"
+                className="flex flex-col items-center gap-3 rounded-2xl border border-edge/10 bg-card shadow-card px-3 py-6 transition-all hover:-translate-y-1 hover:border-brand/30 hover:shadow-card-hover"
               >
                 <ToolIcon icon={tool.icon} />
                 <span className="text-center text-xs font-medium text-fg-soft">

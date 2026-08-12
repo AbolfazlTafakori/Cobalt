@@ -34,6 +34,9 @@ export const defaultContent = {
   nav: {
     logo: 'AT',
     downloadLabel: 'Download CV',
+    // Off by default: the site is designed dark, and the light theme is there
+    // for whoever wants to offer it rather than as part of the default look.
+    themeToggle: false,
     links: [
       { label: 'Home', to: '/' },
       { label: 'About', to: '/about' },

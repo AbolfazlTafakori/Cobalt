@@ -41,7 +41,7 @@ export default function Contact() {
       className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="ambient pointer-events-none absolute inset-0">
         <div className="absolute -right-32 top-4 h-[480px] w-[480px] rounded-full bg-brand/12 blur-[120px]" />
         <div className="dot-grid absolute bottom-1/3 left-0 h-40 w-36 text-dot" />
       </div>
@@ -71,7 +71,7 @@ export default function Contact() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="group flex items-center gap-4 rounded-xl border border-edge/10 bg-edge/[0.03] p-4 transition-colors hover:border-brand/30"
+                  className="group flex items-center gap-4 rounded-xl border border-edge/10 bg-card shadow-card p-4 transition-all hover:border-brand/30 hover:shadow-card-hover"
                 >
                   <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-brand/15 text-accent">
                     <Icon size={20} />
@@ -103,7 +103,7 @@ export default function Contact() {
         {/* ---- Right column ---- */}
         <div className="space-y-8">
           {/* Message form */}
-          <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-6 sm:p-8">
+          <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-6 sm:p-8">
             <h2 className="text-2xl font-bold">Send Me a Message</h2>
             <p className="mt-2 text-sm text-fg-muted">
               Fill out the form below and I&apos;ll get back to you as soon as
@@ -160,7 +160,7 @@ export default function Contact() {
 
           {/* Location + CTA cards */}
           <div className="grid gap-6 sm:grid-cols-2">
-            <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-5">
+            <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-5">
               <div className="flex items-center gap-2">
                 <MapPin size={18} className="text-accent" />
                 <div>
@@ -173,7 +173,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="flex flex-col rounded-2xl border border-edge/10 bg-edge/[0.03] p-6">
+            <div className="flex flex-col rounded-2xl border border-edge/10 bg-card shadow-card p-6">
               <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand/15 text-accent">
                 <Trophy size={22} />
               </span>

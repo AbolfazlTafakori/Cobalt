@@ -7,11 +7,14 @@ import Skills from './components/sections/Skills';
 import Projects from './components/sections/Projects';
 import Contact from './components/sections/Contact';
 import AdminApp from './admin/AdminApp';
+import { useContent } from './content/ContentContext';
 import { useTheme } from './hooks/useTheme';
 
 // Public site shell: top navbar + routed section below.
 function PublicLayout() {
-  const { theme, toggleTheme } = useTheme();
+  const { content } = useContent();
+  const themeToggle = !!content.nav.themeToggle;
+  const { theme, toggleTheme } = useTheme(themeToggle);
   return (
     <div className="min-h-screen bg-page">
       <ScrollToTop />

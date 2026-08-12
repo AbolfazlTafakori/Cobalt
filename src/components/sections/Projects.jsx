@@ -33,7 +33,7 @@ export default function Projects() {
       className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="ambient pointer-events-none absolute inset-0">
         <div className="absolute -right-32 top-4 h-[480px] w-[480px] rounded-full bg-brand/12 blur-[120px]" />
         <div className="dot-grid absolute bottom-24 left-0 h-44 w-40 text-dot" />
       </div>
@@ -81,7 +81,7 @@ export default function Projects() {
           {projects.items.map((project, i) => (
             <article
               key={i}
-              className="flex flex-col rounded-2xl border border-edge/10 bg-edge/[0.03] p-5 transition-colors hover:border-brand/30"
+              className="flex flex-col rounded-2xl border border-edge/10 bg-card shadow-card p-5 transition-all hover:border-brand/30 hover:shadow-card-hover"
             >
               <div className="flex flex-1 flex-col gap-5 sm:flex-row">
                 {/* thumbnail */}

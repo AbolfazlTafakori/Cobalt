@@ -1,5 +1,5 @@
 import { useContent } from '../../content/ContentContext';
-import { PageHeader, Card, Field, Row } from '../components/ui';
+import { PageHeader, Card, Field, Row, Toggle } from '../components/ui';
 import SaveBar from '../components/SaveBar';
 
 export default function NavbarEditor() {
@@ -26,6 +26,15 @@ export default function NavbarEditor() {
           <Field label="Logo Text" value={nav.logo} onChange={setField('logo')} placeholder="AT" />
           <Field label="Download Button Label" value={nav.downloadLabel} onChange={setField('downloadLabel')} placeholder="Download CV" />
         </Row>
+      </Card>
+
+      <Card title="Theme Switch">
+        <Toggle
+          checked={!!nav.themeToggle}
+          onChange={(themeToggle) => updateSection('nav', (prev) => ({ ...prev, themeToggle }))}
+          label="Show the light/dark switch in the header"
+          description="Off: the site is always dark and the button is not rendered at all. On: visitors can switch, and their choice is remembered."
+        />
       </Card>
 
       <Card title="Menu Labels">

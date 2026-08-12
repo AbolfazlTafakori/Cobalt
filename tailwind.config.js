@@ -28,6 +28,7 @@ export default {
         accent: 'var(--c-accent)',
         page: 'rgb(var(--c-page) / <alpha-value>)',
         panel: 'rgb(var(--c-panel) / <alpha-value>)',
+        card: 'rgb(var(--c-card) / <alpha-value>)',
         sunken: 'rgb(var(--c-sunken) / <alpha-value>)',
         edge: 'rgb(var(--c-edge) / <alpha-value>)',
         fg: {
@@ -44,8 +45,12 @@ export default {
         container: '1840px',
       },
       boxShadow: {
-        glow: '0 0 80px 20px rgb(var(--c-brand) / 0.45)',
+        glow: '0 0 80px 20px rgb(var(--c-brand) / var(--glow-alpha))',
         'brand-btn': '0 12px 30px -8px rgb(var(--c-brand) / 0.55)',
+        // Elevation for cards. Flat on the dark theme, which separates by
+        // surface color instead; a real lift on the light one.
+        card: 'var(--shadow-card)',
+        'card-hover': 'var(--shadow-card-hover)',
       },
       keyframes: {
         'fade-up': {

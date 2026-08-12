@@ -16,7 +16,7 @@ export default function Hero() {
       className="relative overflow-hidden bg-page pt-[74px] text-fg"
     >
       {/* Ambient background: radial glow + soft top-left gradient */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="ambient pointer-events-none absolute inset-0">
         <div className="absolute -right-40 top-10 h-[560px] w-[560px] rounded-full bg-brand/20 blur-[120px]" />
         <div className="absolute left-0 top-0 h-[420px] w-[420px] rounded-full bg-brand/10 blur-[120px]" />
         {/* dotted grid: bottom-left near the stats (portrait has its own field) */}

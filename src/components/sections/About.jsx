@@ -20,7 +20,7 @@ export default function About() {
       className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0">
+      <div className="ambient pointer-events-none absolute inset-0">
         <div className="absolute -right-40 top-0 h-[520px] w-[520px] rounded-full bg-brand/15 blur-[120px]" />
         <div className="dot-grid absolute bottom-24 left-0 h-44 w-40 text-dot" />
       </div>
@@ -81,7 +81,7 @@ export default function About() {
         {/* ---- Journey + Drives cards ---- */}
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
           {/* My Journey */}
-          <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-7 sm:p-9">
+          <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-7 sm:p-9">
             <h3 className="text-2xl font-bold">My Journey</h3>
 
             <ol className="mt-8 space-y-8">
@@ -116,7 +116,7 @@ export default function About() {
           </div>
 
           {/* What Drives Me */}
-          <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-7 sm:p-9">
+          <div className="rounded-2xl border border-edge/10 bg-card shadow-card p-7 sm:p-9">
             <div className="flex items-start justify-between">
               <h3 className="text-2xl font-bold">What Drives Me</h3>
               <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-accent">

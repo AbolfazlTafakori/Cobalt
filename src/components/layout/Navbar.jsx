@@ -38,7 +38,7 @@ export default function Navbar({ theme, onToggleTheme }) {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         scrolled
-          ? 'bg-page/80 backdrop-blur-lg border-b border-edge/5'
+          ? 'bg-page/80 backdrop-blur-lg border-b border-edge/10'
           : 'bg-transparent'
       }`}
     >
@@ -78,15 +78,18 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         {/* Right controls */}
         <div className="flex items-center gap-3">
-          {/* Shows the theme it switches to, which is what the click does. */}
-          <button
-            type="button"
-            onClick={onToggleTheme}
-            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-            className="grid h-11 w-11 place-items-center rounded-full border border-edge/10 text-fg-soft transition-colors hover:border-edge/25 hover:text-fg"
-          >
-            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
-          </button>
+          {/* Hidden unless the owner turns it on in the admin, in which case it
+              shows the theme it switches to — which is what the click does. */}
+          {nav.themeToggle && (
+            <button
+              type="button"
+              onClick={onToggleTheme}
+              aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+              className="grid h-11 w-11 place-items-center rounded-full border border-edge/10 text-fg-soft transition-colors hover:border-edge/25 hover:text-fg"
+            >
+              {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
+            </button>
+          )}
 
           <a
             href={profile.resumeUrl}
