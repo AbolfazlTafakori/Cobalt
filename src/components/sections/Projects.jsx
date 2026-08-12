@@ -117,6 +117,8 @@ export default function Projects() {
               <div className="mt-4 flex gap-3">
                 <a
                   href={project.caseStudy}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-dark"
                 >
                   <FileText size={16} />
@@ -124,6 +126,8 @@ export default function Projects() {
                 </a>
                 <a
                   href={project.liveDemo}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/5"
                 >
                   <ExternalLink size={16} />
