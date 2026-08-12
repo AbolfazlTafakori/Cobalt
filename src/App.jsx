@@ -13,10 +13,14 @@ import { useTheme } from './hooks/useTheme';
 function PublicLayout() {
   const { theme, toggleTheme } = useTheme();
   return (
-    <div className="min-h-screen bg-ink-800">
+    <div className="min-h-screen bg-page">
       <ScrollToTop />
+      {/* First tab stop on every page: jumps past the fixed navbar. */}
+      <a href="#main" className="skip-link">
+        Skip to content
+      </a>
       <Navbar theme={theme} onToggleTheme={toggleTheme} />
-      <main>
+      <main id="main">
         <Outlet />
       </main>
     </div>

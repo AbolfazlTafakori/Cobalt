@@ -5,6 +5,16 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Abolfazl Tafakori — Frontend Developer</title>
+    <script>
+      // Apply the saved theme before first paint. Without this the page renders
+      // one light frame before React mounts, and dark is the default.
+      try {
+        if ((localStorage.getItem('theme') || 'dark') === 'dark')
+          document.documentElement.classList.add('dark');
+      } catch (e) {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -4,9 +4,11 @@ export default function ProjectThumb({ title, gradient, image }) {
   if (image) {
     return (
       <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl">
+        {/* Decorative: the card's heading right beside it already names the
+            project, so alt text here would just repeat it. */}
         <img
           src={image}
-          alt={title}
+          alt=""
           className="h-full w-full object-cover object-top"
         />
       </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, NavLink } from 'react-router-dom';
+import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Download, Moon, Sun, Menu, X } from 'lucide-react';
 import { useContent } from '../../content/ContentContext';
 
@@ -7,6 +7,7 @@ export default function Navbar({ theme, onToggleTheme }) {
   const { content } = useContent();
   const { nav, profile } = content;
   const navLinks = nav.links;
+  const { pathname } = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -17,16 +18,27 @@ export default function Navbar({ theme, onToggleTheme }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Leaving the page the menu was opened from should close it — otherwise it
+  // stays over the new page. Escape closes it from the keyboard.
+  useEffect(() => setMobileOpen(false), [pathname]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const onKey = (e) => e.key === 'Escape' && setMobileOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [mobileOpen]);
+
   const linkClass = ({ isActive }) =>
     `relative py-2 text-[15px] font-medium transition-colors ${
-      isActive ? 'text-brand' : 'text-slate-300 hover:text-white'
+      isActive ? 'text-accent' : 'text-fg-soft hover:text-fg'
     }`;
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
         scrolled
-          ? 'bg-ink-900/80 backdrop-blur-lg border-b border-white/5'
+          ? 'bg-page/80 backdrop-blur-lg border-b border-edge/5'
           : 'bg-transparent'
       }`}
     >
@@ -35,13 +47,14 @@ export default function Navbar({ theme, onToggleTheme }) {
         <Link
           to="/"
           aria-label="Home"
-          className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-xl border border-white/15 bg-gradient-to-br from-ink-700 to-ink-900 text-[17px] font-extrabold tracking-tight shadow-lg ring-1 ring-inset ring-white/5"
+          className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-xl border border-edge/15 bg-gradient-to-br from-ink-700 to-ink-900 text-[17px] font-extrabold tracking-tight shadow-lg ring-1 ring-inset ring-edge/5"
         >
           {/* subtle top-left sheen */}
           <span className="pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-white/10 to-transparent" />
           <span className="relative">
+            {/* The tile stays dark in both themes, so its lettering does too. */}
             <span className="text-white">{nav.logo.charAt(0)}</span>
-            <span className="text-brand">{nav.logo.slice(1)}</span>
+            <span className="text-brand-light">{nav.logo.slice(1)}</span>
           </span>
         </Link>
 
@@ -65,13 +78,14 @@ export default function Navbar({ theme, onToggleTheme }) {
 
         {/* Right controls */}
         <div className="flex items-center gap-3">
+          {/* Shows the theme it switches to, which is what the click does. */}
           <button
             type="button"
             onClick={onToggleTheme}
-            aria-label="Toggle theme"
-            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 text-slate-200 transition-colors hover:border-white/25 hover:text-white"
+            aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
+            className="grid h-11 w-11 place-items-center rounded-full border border-edge/10 text-fg-soft transition-colors hover:border-edge/25 hover:text-fg"
           >
-            {theme === 'dark' ? <Moon size={19} /> : <Sun size={19} />}
+            {theme === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
           </button>
 
           <a
@@ -87,8 +101,10 @@ export default function Navbar({ theme, onToggleTheme }) {
           <button
             type="button"
             onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
-            className="grid h-11 w-11 place-items-center rounded-full border border-white/10 text-slate-200 lg:hidden"
+            aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileOpen}
+            aria-controls="mobile-menu"
+            className="grid h-11 w-11 place-items-center rounded-full border border-edge/10 text-fg-soft transition-colors hover:border-edge/25 hover:text-fg lg:hidden"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -97,7 +113,10 @@ export default function Navbar({ theme, onToggleTheme }) {
 
       {/* Mobile dropdown */}
       {mobileOpen && (
-        <div className="border-t border-white/5 bg-ink-900/95 backdrop-blur-lg lg:hidden">
+        <div
+          id="mobile-menu"
+          className="border-t border-edge/5 bg-page/95 backdrop-blur-lg lg:hidden"
+        >
           <ul className="container-page flex flex-col py-4">
             {navLinks.map((link, i) => (
               <li key={i}>
@@ -106,8 +125,8 @@ export default function Navbar({ theme, onToggleTheme }) {
                   end={link.to === '/'}
                   onClick={() => setMobileOpen(false)}
                   className={({ isActive }) =>
-                    `block rounded-lg px-2 py-3 text-[15px] font-medium ${
-                      isActive ? 'text-brand' : 'text-slate-300'
+                    `block rounded-lg px-3 py-3 text-[15px] font-medium transition-colors ${
+                      isActive ? 'bg-brand/10 text-accent' : 'text-fg-soft hover:bg-edge/5 hover:text-fg'
                     }`
                   }
                 >
@@ -115,14 +134,16 @@ export default function Navbar({ theme, onToggleTheme }) {
                 </NavLink>
               </li>
             ))}
-            <a
-              href={profile.resumeUrl}
-              download
-              className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-[15px] font-semibold text-white sm:hidden"
-            >
-              <Download size={18} />
-              {nav.downloadLabel}
-            </a>
+            <li className="sm:hidden">
+              <a
+                href={profile.resumeUrl}
+                download
+                className="mt-2 flex items-center justify-center gap-2 rounded-xl bg-brand px-5 py-3 text-[15px] font-semibold text-white"
+              >
+                <Download size={18} />
+                {nav.downloadLabel}
+              </a>
+            </li>
           </ul>
         </div>
       )}

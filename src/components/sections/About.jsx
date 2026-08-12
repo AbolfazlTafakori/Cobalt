@@ -17,7 +17,7 @@ export default function About() {
   return (
     <section
       id="about"
-      className="relative overflow-hidden bg-ink-800 pb-20 pt-28 text-white lg:pb-28 lg:pt-32"
+      className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
       <div className="pointer-events-none absolute inset-0">
@@ -30,16 +30,16 @@ export default function About() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           {/* Left copy */}
           <div className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
+            <span className="inline-flex items-center gap-2 rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
               <User size={15} />
               {about.badge}
             </span>
 
             <h2 className="mt-6 text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl lg:text-6xl">
-              About <span className="text-brand">{profile.firstName} {profile.lastName}</span>
+              About <span className="text-accent">{profile.firstName} {profile.lastName}</span>
             </h2>
 
-            <div className="mx-auto mt-6 max-w-xl space-y-3 text-base leading-relaxed text-slate-400 lg:mx-0 lg:text-lg">
+            <div className="mx-auto mt-6 max-w-xl space-y-3 text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {about.paragraphs.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
@@ -56,7 +56,7 @@ export default function About() {
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-white/15 px-7 py-4 text-base font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/5"
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-edge/15 px-7 py-4 text-base font-semibold text-fg transition-colors hover:border-edge/35 hover:bg-edge/5"
               >
                 <Send size={19} />
                 Contact Me
@@ -81,7 +81,7 @@ export default function About() {
         {/* ---- Journey + Drives cards ---- */}
         <div className="mt-8 grid gap-8 lg:grid-cols-2">
           {/* My Journey */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 sm:p-9">
+          <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-7 sm:p-9">
             <h3 className="text-2xl font-bold">My Journey</h3>
 
             <ol className="mt-8 space-y-8">
@@ -92,20 +92,20 @@ export default function About() {
                   <li key={i} className="relative flex gap-5">
                     {/* icon + connector */}
                     <div className="relative flex flex-col items-center">
-                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-brand">
+                      <span className="grid h-14 w-14 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-accent">
                         <Icon size={22} />
                       </span>
                       {!isLast && (
-                        <span className="mt-2 w-px flex-1 border-l border-dashed border-white/15" />
+                        <span className="mt-2 w-px flex-1 border-l border-dashed border-edge/15" />
                       )}
                     </div>
 
                     <div className="pb-1">
                       <h4 className="text-lg font-semibold">{item.title}</h4>
-                      <p className="mt-1 text-sm font-medium text-brand">
+                      <p className="mt-1 text-sm font-medium text-accent">
                         {item.period}
                       </p>
-                      <p className="mt-3 text-sm leading-relaxed text-slate-400">
+                      <p className="mt-3 text-sm leading-relaxed text-fg-muted">
                         {item.description}
                       </p>
                     </div>
@@ -116,15 +116,15 @@ export default function About() {
           </div>
 
           {/* What Drives Me */}
-          <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-7 sm:p-9">
+          <div className="rounded-2xl border border-edge/10 bg-edge/[0.03] p-7 sm:p-9">
             <div className="flex items-start justify-between">
               <h3 className="text-2xl font-bold">What Drives Me</h3>
-              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-brand">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-brand/40 bg-brand/10 text-accent">
                 <Heart size={19} />
               </span>
             </div>
 
-            <div className="mt-6 space-y-4 text-base leading-relaxed text-slate-400">
+            <div className="mt-6 space-y-4 text-base leading-relaxed text-fg-muted">
               {about.drives.map((p, i) => (
                 <p key={i}>{p}</p>
               ))}
@@ -134,7 +134,7 @@ export default function About() {
               {about.tags.map((tag, i) => (
                 <span
                   key={i}
-                  className="rounded-full border border-brand/30 bg-brand/[0.07] px-4 py-2 text-sm font-medium text-brand"
+                  className="rounded-full border border-brand/30 bg-brand/[0.07] px-4 py-2 text-sm font-medium text-accent"
                 >
                   {tag}
                 </span>

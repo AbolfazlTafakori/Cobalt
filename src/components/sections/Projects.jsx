@@ -30,7 +30,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative overflow-hidden bg-ink-800 pb-20 pt-28 text-white lg:pb-28 lg:pt-32"
+      className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
       <div className="pointer-events-none absolute inset-0">
@@ -42,13 +42,13 @@ export default function Projects() {
         {/* ---- Header row ---- */}
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:gap-20">
           <div className="text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
               {projects.badge}
             </span>
             <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-              Featured <span className="text-brand">Projects</span>
+              Featured <span className="text-accent">Projects</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-400 lg:mx-0 lg:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {projects.intro}
             </p>
           </div>
@@ -59,13 +59,13 @@ export default function Projects() {
               const Icon = statIcons[stat.icon] ?? FolderKanban;
               return (
                 <div key={i} className="text-center">
-                  <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-white/10 text-slate-200">
+                  <span className="mx-auto grid h-14 w-14 place-items-center rounded-full border border-edge/10 text-fg-soft">
                     <Icon size={22} />
                   </span>
-                  <p className="mt-3 text-2xl font-bold text-brand sm:text-3xl">
+                  <p className="mt-3 text-2xl font-bold text-accent sm:text-3xl">
                     {statValue(stat, live)}
                   </p>
-                  <p className="mt-1 text-xs text-slate-400 sm:text-sm">
+                  <p className="mt-1 text-xs text-fg-muted sm:text-sm">
                     {stat.label}
                   </p>
                 </div>
@@ -81,7 +81,7 @@ export default function Projects() {
           {projects.items.map((project, i) => (
             <article
               key={i}
-              className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition-colors hover:border-brand/30"
+              className="flex flex-col rounded-2xl border border-edge/10 bg-edge/[0.03] p-5 transition-colors hover:border-brand/30"
             >
               <div className="flex flex-1 flex-col gap-5 sm:flex-row">
                 {/* thumbnail */}
@@ -108,7 +108,7 @@ export default function Projects() {
                 {project.tags.map((tag, ti) => (
                   <span
                     key={ti}
-                    className="rounded-md border border-white/10 bg-white/5 px-2.5 py-1 text-xs font-medium text-slate-300"
+                    className="rounded-md border border-edge/10 bg-edge/5 px-2.5 py-1 text-xs font-medium text-fg-soft"
                   >
                     {tag}
                   </span>
@@ -130,7 +130,7 @@ export default function Projects() {
                   href={project.liveDemo}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-white/15 px-4 py-3 text-sm font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/5"
+                  className="inline-flex flex-1 items-center justify-center gap-2 rounded-lg border border-edge/15 px-4 py-3 text-sm font-semibold text-fg transition-colors hover:border-edge/35 hover:bg-edge/5"
                 >
                   <ExternalLink size={16} />
                   Live Demo

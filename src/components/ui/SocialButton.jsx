@@ -32,7 +32,7 @@ export default function SocialButton({ href, icon, label }) {
       target={icon === 'mail' ? undefined : '_blank'}
       rel="noreferrer"
       aria-label={label}
-      className="grid h-[52px] w-[52px] place-items-center rounded-full border border-white/10 text-slate-300 transition-all hover:-translate-y-1 hover:border-brand hover:text-brand-light"
+      className="grid h-[52px] w-[52px] place-items-center rounded-full border border-edge/10 text-fg-soft transition-all hover:-translate-y-1 hover:border-brand hover:text-accent"
     >
       <Icon width={20} height={20} size={20} />
     </a>

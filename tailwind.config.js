@@ -20,6 +20,22 @@ export default {
           600: 'rgb(var(--c-ink-600) / <alpha-value>)',
         },
         dot: 'rgb(var(--c-dot) / <alpha-value>)',
+
+        // Semantic surfaces and text for the public site. These flip between
+        // the dark and light themes; see the token block in index.css.
+        // Brand blue tuned for text on the current theme. No alpha channel:
+        // it is a resolved color, not a triplet (see --c-accent in index.css).
+        accent: 'var(--c-accent)',
+        page: 'rgb(var(--c-page) / <alpha-value>)',
+        panel: 'rgb(var(--c-panel) / <alpha-value>)',
+        sunken: 'rgb(var(--c-sunken) / <alpha-value>)',
+        edge: 'rgb(var(--c-edge) / <alpha-value>)',
+        fg: {
+          DEFAULT: 'rgb(var(--c-fg) / <alpha-value>)',
+          soft: 'rgb(var(--c-fg-soft) / <alpha-value>)',
+          muted: 'rgb(var(--c-fg-muted) / <alpha-value>)',
+          subtle: 'rgb(var(--c-fg-subtle) / <alpha-value>)',
+        },
       },
       fontFamily: {
         sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],

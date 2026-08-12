@@ -13,7 +13,7 @@ export default function Hero() {
   return (
     <section
       id="home"
-      className="relative overflow-hidden bg-ink-800 pt-[74px] text-white"
+      className="relative overflow-hidden bg-page pt-[74px] text-fg"
     >
       {/* Ambient background: radial glow + soft top-left gradient */}
       <div className="pointer-events-none absolute inset-0">
@@ -27,20 +27,20 @@ export default function Hero() {
         <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
           {/* ---- Left: intro copy ---- */}
           <div className="animate-fade-up text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
               {profile.greeting}
             </span>
 
             <h1 className="mt-6 whitespace-nowrap text-[clamp(1.55rem,8.5vw,2.25rem)] font-extrabold leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
               {profile.firstName}{' '}
-              <span className="text-brand">{profile.lastName}</span>
+              <span className="text-accent">{profile.lastName}</span>
             </h1>
 
-            <p className="mt-4 text-2xl font-semibold text-brand sm:text-3xl">
+            <p className="mt-4 text-2xl font-semibold text-accent sm:text-3xl">
               {profile.role}
             </p>
 
-            <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-slate-400 lg:mx-0 lg:text-lg">
+            <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {profile.tagline}
             </p>
 
@@ -55,7 +55,7 @@ export default function Hero() {
               </Link>
               <Link
                 to="/contact"
-                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-white/15 px-7 py-4 text-base font-semibold text-white transition-colors hover:border-white/35 hover:bg-white/5"
+                className="inline-flex items-center justify-center gap-2.5 rounded-xl border border-edge/15 px-7 py-4 text-base font-semibold text-fg transition-colors hover:border-edge/35 hover:bg-edge/5"
               >
                 <Send size={19} />
                 Contact Me

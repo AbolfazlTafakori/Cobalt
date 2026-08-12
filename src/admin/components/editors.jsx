@@ -34,7 +34,7 @@ export function StringListEditor({ label, items = [], onChange, placeholder, tex
       </div>
       <button
         onClick={add}
-        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-dashed border-brand/40 bg-brand/5 px-4 py-2 text-sm font-medium text-brand hover:bg-brand/10"
+        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-dashed border-brand/40 bg-brand/5 px-4 py-2 text-sm font-medium text-accent hover:bg-brand/10"
       >
         <Plus size={15} />
         Add
@@ -66,7 +66,7 @@ export function AddItemButton({ label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-brand hover:bg-brand/10"
+      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-accent hover:bg-brand/10"
     >
       <Plus size={16} />
       {label}

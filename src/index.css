@@ -6,8 +6,14 @@
 
 @layer base {
   /* Theme color tokens as R G B channels (space-separated for alpha support).
-     Defaults match the original design; the admin panel overrides these at
-     runtime via ContentProvider. */
+     Two families live here:
+
+     - Brand and ink are the palette the admin panel recolors at runtime. Ink
+       is always dark; the admin surface is built on it and never inverts.
+     - The semantic tokens below (page/panel/card/sunken/edge/fg) are what the
+       public site paints with, and they swap between the dark and light
+       themes. Components name the role, not the color, so one block of
+       overrides flips the whole site. */
   :root {
     --c-brand: 37 99 235;
     --c-brand-light: 59 130 246;
@@ -17,6 +23,61 @@
     --c-ink-700: 15 23 41;
     --c-ink-600: 19 28 49;
     --c-dot: 4 62 195;
+
+    /* ---- Dark theme (the default the design ships with) ---- */
+    --c-page: 11 17 32;
+    --c-panel: 15 23 41;
+    --c-sunken: 8 11 22;
+    /* Borders and the faint surface washes are drawn in this color at low
+       alpha, so `border-edge/10` and `bg-edge/[0.03]` read correctly on both
+       themes without every component branching. */
+    --c-edge: 255 255 255;
+    --c-fg: 255 255 255;
+    --c-fg-soft: 203 213 225;
+    --c-fg-muted: 148 163 184;
+    --c-fg-subtle: 100 116 139;
+    /* How loud the decorative dot grid and ambient glows are allowed to be. */
+    --dot-opacity: 1;
+    /* Brand blue as *text*. The raw brand color is a mid-tone: it clears 4.5:1
+       against neither theme's page, and less still on the brand-tinted chips it
+       usually sits in. Lifting it toward the page's far end keeps the hue the
+       admin chose while making small text readable. The plain value first is
+       the fallback for engines without color-mix. */
+    --c-accent: rgb(var(--c-brand-light));
+    --c-accent: color-mix(in srgb, rgb(var(--c-brand-light)) 72%, white);
+  }
+
+  /* ---- Light theme ---- */
+  html:not(.dark) {
+    --c-page: 248 250 252;
+    --c-panel: 255 255 255;
+    --c-sunken: 241 245 249;
+    --c-edge: 15 23 42;
+    --c-fg: 15 23 42;
+    --c-fg-soft: 51 65 85;
+    --c-fg-muted: 71 85 105;
+    --c-fg-subtle: 100 116 139;
+    /* The dots are near-black on a pale page — the same weight as the dark
+       theme would read as dirt rather than texture. */
+    --dot-opacity: 0.22;
+    --c-accent: rgb(var(--c-brand-dark));
+    --c-accent: color-mix(in srgb, rgb(var(--c-brand-dark)) 88%, black);
+  }
+
+  /* The admin panel is a dark tool surface and does not follow the public
+     site's theme, so it pins the dark values whatever the visitor last chose. */
+  .theme-dark {
+    --c-page: 11 17 32;
+    --c-panel: 15 23 41;
+    --c-sunken: 8 11 22;
+    --c-edge: 255 255 255;
+    --c-fg: 255 255 255;
+    --c-fg-soft: 203 213 225;
+    --c-fg-muted: 148 163 184;
+    --c-fg-subtle: 100 116 139;
+    --dot-opacity: 1;
+    --c-accent: rgb(var(--c-brand-light));
+    --c-accent: color-mix(in srgb, rgb(var(--c-brand-light)) 72%, white);
   }
 
   html {
@@ -24,12 +85,31 @@
   }
 
   body {
-    @apply bg-ink-800 text-white font-sans antialiased;
+    @apply bg-page text-fg font-sans antialiased;
   }
 
-  /* Light theme surface overrides */
-  html:not(.dark) body {
-    @apply bg-slate-50 text-slate-900;
+  /* One focus ring for the whole product. `:where` keeps specificity at zero,
+     so any component that needs a different treatment still wins. */
+  :where(a, button, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 2px solid rgb(var(--c-brand-light));
+    outline-offset: 2px;
+  }
+
+  /* Respect the OS setting: the entrance animations and the floating portrait
+     are decoration, and smooth scrolling is a common vestibular trigger. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -42,5 +122,11 @@
   .dot-grid {
     background-image: radial-gradient(currentColor 1.4px, transparent 1.4px);
     background-size: 22px 22px;
+    opacity: var(--dot-opacity);
+  }
+
+  /* Visible only once focused — the first tab stop on every page. */
+  .skip-link {
+    @apply absolute left-4 top-4 z-[100] -translate-y-24 rounded-xl bg-brand px-5 py-3 text-sm font-semibold text-white shadow-brand-btn transition-transform focus-visible:translate-y-0;
   }
 }

@@ -35,7 +35,7 @@ export default function ClampedText({ text, onExpand, label = 'See more' }) {
     <>
       <p
         ref={ref}
-        className="mt-3 line-clamp-3 whitespace-pre-wrap text-sm leading-relaxed text-slate-400"
+        className="mt-3 line-clamp-3 whitespace-pre-wrap text-sm leading-relaxed text-fg-muted"
       >
         {text}
       </p>
@@ -43,7 +43,7 @@ export default function ClampedText({ text, onExpand, label = 'See more' }) {
         <button
           type="button"
           onClick={onExpand}
-          className="mt-2 self-start text-xs font-medium text-brand underline decoration-brand/40 underline-offset-4 transition-colors hover:text-brand-light hover:decoration-brand"
+          className="mt-2 self-start text-xs font-medium text-accent underline decoration-brand/40 underline-offset-4 transition-colors hover:text-accent hover:decoration-brand"
         >
           {label}
         </button>

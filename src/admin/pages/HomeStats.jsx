@@ -1,7 +1,7 @@
 import { useContent } from '../../content/ContentContext';
 import { PageHeader, Card, Field, Row } from '../components/ui';
 import { ListItemBlock, AddItemButton } from '../components/editors';
-import { StatSourceField, GithubStatsStatus } from '../components/StatSource';
+import { StatLiveSource, GithubStatsStatus } from '../components/StatSource';
 import SaveBar from '../components/SaveBar';
 
 export default function HomeStats() {
@@ -11,6 +11,10 @@ export default function HomeStats() {
   const setStat = (i, k) => (e) =>
     updateSection('stats', (prev) =>
       prev.map((s, idx) => (idx === i ? { ...s, [k]: e.target.value } : s)),
+    );
+  const setStatSource = (i) => (source) =>
+    updateSection('stats', (prev) =>
+      prev.map((s, idx) => (idx === i ? { ...s, source } : s)),
     );
   const remove = (i) =>
     updateSection('stats', (prev) => prev.filter((_, idx) => idx !== i));
@@ -26,12 +30,12 @@ export default function HomeStats() {
         <div className="space-y-4">
           {stats.map((s, i) => (
             <ListItemBlock key={i} index={i} onRemove={() => remove(i)}>
-              <div className="space-y-4">
+              <div>
                 <Row>
                   <Field label="Value" value={s.value} onChange={setStat(i, 'value')} placeholder="+10" />
                   <Field label="Label" value={s.label} onChange={setStat(i, 'label')} placeholder="Projects Completed" />
                 </Row>
-                <StatSourceField value={s.source} onChange={setStat(i, 'source')} />
+                <StatLiveSource stat={s} onChange={setStatSource(i)} />
               </div>
             </ListItemBlock>
           ))}

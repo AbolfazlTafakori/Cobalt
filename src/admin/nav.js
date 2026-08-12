@@ -15,7 +15,6 @@ import {
 export const navGroups = [
   {
     label: 'Site',
-    emoji: '⚙️',
     items: [
       { to: '/admin/identity', label: 'Identity', icon: IdCard },
       { to: '/admin/navbar', label: 'Navbar', icon: Menu },
@@ -24,7 +23,6 @@ export const navGroups = [
   },
   {
     label: 'Pages',
-    emoji: '📄',
     items: [
       { to: '/admin/home', label: 'Home (Stats)', icon: BarChart3 },
       { to: '/admin/about', label: 'About', icon: UserRound },
@@ -35,7 +33,6 @@ export const navGroups = [
   },
   {
     label: 'Links & Account',
-    emoji: '🔗',
     items: [
       { to: '/admin/socials', label: 'Social Links', icon: Share2 },
       { to: '/admin/password', label: 'Change Password', icon: KeyRound },

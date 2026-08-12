@@ -1,29 +1,67 @@
-// Admin controls for stats that can read their number from GitHub instead of
-// being typed by hand. Shared by the Home and Projects stat editors.
-import { Field } from './ui';
-import { STAT_SOURCES, useGithubStats } from '../../content/githubStats';
+// The "Live GitHub" control that sits under every stat in the admin. Off, the
+// stat shows the number that was typed; on, it shows a figure read from the
+// GitHub account linked under Socials — with the typed number kept as the
+// offline fallback. Shared by the Home and Projects stat editors.
+import { Toggle, Segmented } from './ui';
+import { useGithubStats, statValue } from '../../content/githubStats';
 
-// Per-stat picker: manual, or one of the live GitHub figures.
-export function StatSourceField({ value, onChange }) {
+const METRICS = [
+  { value: 'github-repos', label: 'Repositories' },
+  { value: 'github-commits', label: 'Commits this year' },
+];
+
+const isLive = (source) => METRICS.some((m) => m.value === source);
+
+export function StatLiveSource({ stat, onChange }) {
+  const { stats: live, user, error } = useGithubStats({ force: true });
+  const on = isLive(stat.source);
+  // Turning it on lands on repositories; turning it off keeps nothing behind.
+  const setOn = (next) => onChange(next ? stat.source || METRICS[0].value : 'manual');
+
   return (
-    <Field
-      as="select"
-      label="Source"
-      value={value ?? 'manual'}
-      onChange={onChange}
-      hint="Live numbers fall back to the value on the left."
-    >
-      {STAT_SOURCES.map((s) => (
-        <option key={s.value} value={s.value} className="bg-ink-800">
-          {s.label}
-        </option>
-      ))}
-    </Field>
+    <div className="mt-4 border-t border-white/10 pt-4">
+      <Toggle
+        checked={on}
+        onChange={setOn}
+        label="Live GitHub"
+        description={
+          user
+            ? `Reads the real number from github.com/${user}`
+            : 'Add a GitHub profile link under Socials to use this'
+        }
+      />
+
+      {on && (
+        <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
+          <Segmented
+            label="Which GitHub number"
+            value={stat.source}
+            onChange={onChange}
+            options={METRICS}
+          />
+          <p className="text-xs text-slate-500">
+            {error || !user ? (
+              <>
+                Showing <strong className="text-slate-300">{stat.value || '—'}</strong> — GitHub is
+                unreachable right now.
+              </>
+            ) : (
+              <>
+                Showing <strong className="text-accent">{statValue(stat, live)}</strong> · falls back
+                to <strong className="text-slate-300">{stat.value || '—'}</strong> when GitHub
+                can’t be reached.
+              </>
+            )}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
-// Which account is being read, and what it currently returns — so the owner can
-// tell a working connection from a silent fallback before saving.
+// One line at the top of the Stats card: which account is being read and
+// whether it answered. Lets the owner tell a working connection from a silent
+// fallback before saving.
 export function GithubStatsStatus() {
   const { stats, loading, error, user } = useGithubStats({ force: true });
   const year = new Date().getFullYear();
@@ -31,8 +69,8 @@ export function GithubStatsStatus() {
   if (!user)
     return (
       <Note tone="warn">
-        No GitHub profile link found under Socials, so live sources stay on the typed
-        values. Add one like <code>https://github.com/your-username</code> to switch them on.
+        No GitHub profile link found under Socials, so “Live GitHub” has nothing to read. Add one
+        like <code>https://github.com/your-username</code> to switch it on.
       </Note>
     );
 
@@ -41,15 +79,15 @@ export function GithubStatsStatus() {
   if (error)
     return (
       <Note tone="warn">
-        Can’t reach GitHub for <strong>{user}</strong> ({error}). The site keeps showing the
-        values typed below until it’s reachable again.
+        Can’t reach GitHub for <strong>{user}</strong> ({error}). Stats set to live keep showing
+        their typed values until it answers again.
       </Note>
     );
 
   return (
     <Note>
-      Live from <strong>github.com/{user}</strong>: {fmt(stats?.repos)} public repositories ·{' '}
-      {fmt(stats?.commits)} commits in {year}. Refreshed every 6 hours.
+      <strong className="text-slate-300">github.com/{user}</strong> — {fmt(stats?.repos)} public
+      repositories · {fmt(stats?.commits)} commits in {year}. Refreshed every 6 hours.
     </Note>
   );
 }

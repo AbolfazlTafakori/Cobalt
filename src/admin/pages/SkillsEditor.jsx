@@ -100,7 +100,7 @@ export default function SkillsEditor() {
                   </div>
                   <button
                     onClick={() => addItem(ci)}
-                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-brand/40 bg-brand/5 px-3 py-1.5 text-xs font-medium text-brand hover:bg-brand/10"
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-dashed border-brand/40 bg-brand/5 px-3 py-1.5 text-xs font-medium text-accent hover:bg-brand/10"
                   >
                     <Plus size={13} /> Add skill
                   </button>

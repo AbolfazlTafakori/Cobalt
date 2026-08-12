@@ -21,13 +21,7 @@ const TTL_MS = 6 * 60 * 60 * 1000;
 // typed fallback for six hours over a moment of throttling.
 const PARTIAL_TTL_MS = 10 * 60 * 1000;
 
-// Value of `stat.source`. Anything else (including undefined) means manual.
-export const STAT_SOURCES = [
-  { value: 'manual', label: 'Manual — use the value above' },
-  { value: 'github-repos', label: 'GitHub — public repositories' },
-  { value: 'github-commits', label: 'GitHub — commits this year' },
-];
-
+// Values `stat.source` can take. Anything else (including undefined) is manual.
 const SOURCE_KEYS = { 'github-repos': 'repos', 'github-commits': 'commits' };
 
 // github.com paths that are site features rather than accounts.

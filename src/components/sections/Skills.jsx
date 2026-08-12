@@ -20,7 +20,7 @@ export default function Skills() {
   return (
     <section
       id="skills"
-      className="relative overflow-hidden bg-ink-800 pb-20 pt-28 text-white lg:pb-28 lg:pt-32"
+      className="relative overflow-hidden bg-page pb-20 pt-28 text-fg lg:pb-28 lg:pt-32"
     >
       {/* Ambient background */}
       <div className="pointer-events-none absolute inset-0">
@@ -32,13 +32,13 @@ export default function Skills() {
         {/* ---- Header row ---- */}
         <div className="grid items-start gap-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20">
           <div className="text-center lg:text-left">
-            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-brand">
+            <span className="inline-block rounded-full border border-brand/40 bg-brand/10 px-5 py-2 text-sm font-medium text-accent">
               {skills.badge}
             </span>
             <h1 className="mt-6 text-5xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-              My <span className="text-brand">Skills</span>
+              My <span className="text-accent">Skills</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-slate-400 lg:mx-0 lg:text-lg">
+            <p className="mx-auto mt-5 max-w-xl text-base leading-relaxed text-fg-muted lg:mx-0 lg:text-lg">
               {skills.intro}
             </p>
           </div>
@@ -59,10 +59,10 @@ export default function Skills() {
             return (
               <div
                 key={ci}
-                className="rounded-2xl border border-white/10 bg-ink-700 p-6 transition-colors hover:border-brand/30"
+                className="rounded-2xl border border-edge/10 bg-panel p-6 transition-colors hover:border-brand/30"
               >
                 <div className="flex items-center gap-3">
-                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-brand/40 bg-brand/10 text-brand">
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl border border-brand/40 bg-brand/10 text-accent">
                     <Icon size={20} />
                   </span>
                   <h3 className="text-[15px] font-semibold leading-tight">
@@ -70,7 +70,7 @@ export default function Skills() {
                   </h3>
                 </div>
 
-                <p className="mt-4 text-sm leading-relaxed text-slate-400">
+                <p className="mt-4 text-sm leading-relaxed text-fg-muted">
                   {cat.description}
                 </p>
 
@@ -91,10 +91,10 @@ export default function Skills() {
             {skills.tools.map((tool, ti) => (
               <div
                 key={ti}
-                className="flex flex-col items-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-3 py-6 transition-all hover:-translate-y-1 hover:border-brand/30"
+                className="flex flex-col items-center gap-3 rounded-2xl border border-edge/10 bg-edge/[0.03] px-3 py-6 transition-all hover:-translate-y-1 hover:border-brand/30"
               >
                 <ToolIcon icon={tool.icon} />
-                <span className="text-center text-xs font-medium text-slate-300">
+                <span className="text-center text-xs font-medium text-fg-soft">
                   {tool.name}
                 </span>
               </div>

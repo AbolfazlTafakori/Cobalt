@@ -45,6 +45,68 @@ export function Row({ children }) {
   return <div className="grid gap-4 sm:grid-cols-2">{children}</div>;
 }
 
+// On/off control for a single setting. The whole row is the hit target, so the
+// label and the track behave as one control rather than two.
+export function Toggle({ checked, onChange, label, description }) {
+  return (
+    <label className="flex cursor-pointer items-center justify-between gap-4">
+      <span>
+        <span className="block text-sm font-medium text-slate-200">{label}</span>
+        {description && (
+          <span className="mt-0.5 block text-xs text-slate-500">{description}</span>
+        )}
+      </span>
+      <input
+        type="checkbox"
+        role="switch"
+        checked={checked}
+        onChange={(e) => onChange(e.target.checked)}
+        className="peer sr-only"
+      />
+      <span
+        aria-hidden="true"
+        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-brand-light ${
+          checked ? 'bg-brand' : 'bg-white/15'
+        }`}
+      >
+        <span
+          className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow-sm transition-all ${
+            checked ? 'left-6' : 'left-1'
+          }`}
+        />
+      </span>
+    </label>
+  );
+}
+
+// Two or three mutually exclusive choices, shown side by side rather than
+// hidden behind a dropdown — at this count the options are worth reading.
+export function Segmented({ label, value, onChange, options }) {
+  return (
+    <div role="radiogroup" aria-label={label} className="inline-flex rounded-xl bg-ink-900/50 p-1">
+      {options.map((opt) => {
+        const active = opt.value === value;
+        return (
+          <button
+            key={opt.value}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => onChange(opt.value)}
+            className={`rounded-lg px-3.5 py-2 text-sm font-medium transition-colors ${
+              active
+                ? 'bg-brand text-white'
+                : 'text-slate-400 hover:bg-white/5 hover:text-white'
+            }`}
+          >
+            {opt.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 // Color picker synced with a hex text field. `value` may be a hex or 'none'.
 export function ColorField({ label, value, onChange, hint }) {
   const swatch = value === 'none' || !value ? '#000000' : value;
@@ -101,7 +163,7 @@ export function AddButton({ label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-brand transition-colors hover:border-brand hover:bg-brand/10"
+      className="mt-4 inline-flex items-center gap-2 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-5 py-3 text-sm font-semibold text-accent transition-colors hover:border-brand hover:bg-brand/10"
     >
       <Plus size={16} />
       {label}
@@ -142,7 +204,7 @@ function IconButton({ onClick, label, danger }) {
       className={`grid h-9 w-9 place-items-center rounded-lg border border-white/10 transition-colors ${
         danger
           ? 'text-red-400 hover:border-red-500/50 hover:bg-red-500/10'
-          : 'text-slate-300 hover:border-brand/40 hover:bg-brand/10 hover:text-brand'
+          : 'text-slate-300 hover:border-brand/40 hover:bg-brand/10 hover:text-accent'
       }`}
     >
       {danger ? <TrashIcon /> : <EditIcon />}

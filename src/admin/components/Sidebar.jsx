@@ -20,7 +20,7 @@ export default function Sidebar({ onNavigate }) {
   const linkClass = ({ isActive }) =>
     `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors ${
       isActive
-        ? 'bg-brand/15 font-medium text-brand'
+        ? 'bg-brand/15 font-medium text-accent'
         : 'text-slate-400 hover:bg-white/5 hover:text-white'
     }`;
 
@@ -42,19 +42,20 @@ export default function Sidebar({ onNavigate }) {
         {navGroups.map((group) => (
           <div key={group.label} className="mb-2">
             <button
+              type="button"
               onClick={() => toggle(group.label)}
-              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 hover:text-slate-300"
+              aria-expanded={open[group.label]}
+              aria-controls={`nav-group-${group.label}`}
+              className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 transition-colors hover:text-slate-300"
             >
-              <span>
-                {group.emoji} {group.label}
-              </span>
+              <span>{group.label}</span>
               <ChevronDown
                 size={14}
                 className={`transition-transform ${open[group.label] ? '' : '-rotate-90'}`}
               />
             </button>
             {open[group.label] && (
-              <ul className="mt-1 space-y-1">
+              <ul id={`nav-group-${group.label}`} className="mt-1 space-y-1">
                 {group.items.map((item) => (
                   <li key={item.to}>
                     <NavLink to={item.to} className={linkClass} onClick={onNavigate}>

@@ -21,32 +21,36 @@ function RequireAuth({ children }) {
 
 export default function AdminApp() {
   return (
-    <ToastProvider>
-      <ConfirmProvider>
-        <Routes>
-          <Route path="login" element={<Login />} />
-          <Route
-            element={
-              <RequireAuth>
-                <AdminLayout />
-              </RequireAuth>
-            }
-          >
-            <Route index element={<Navigate to="/admin/identity" replace />} />
-            <Route path="identity" element={<Identity />} />
-            <Route path="navbar" element={<NavbarEditor />} />
-            <Route path="theme" element={<Theme />} />
-            <Route path="home" element={<HomeStats />} />
-            <Route path="about" element={<AboutEditor />} />
-            <Route path="skills" element={<SkillsEditor />} />
-            <Route path="projects" element={<ProjectsEditor />} />
-            <Route path="contact" element={<ContactEditor />} />
-            <Route path="socials" element={<SocialsEditor />} />
-            <Route path="password" element={<Password />} />
-          </Route>
-          <Route path="*" element={<Navigate to="/admin/identity" replace />} />
-        </Routes>
-      </ConfirmProvider>
-    </ToastProvider>
+    // The panel is a dark tool surface and ignores whatever theme the visitor
+    // last picked on the public site.
+    <div className="theme-dark">
+      <ToastProvider>
+        <ConfirmProvider>
+          <Routes>
+            <Route path="login" element={<Login />} />
+            <Route
+              element={
+                <RequireAuth>
+                  <AdminLayout />
+                </RequireAuth>
+              }
+            >
+              <Route index element={<Navigate to="/admin/identity" replace />} />
+              <Route path="identity" element={<Identity />} />
+              <Route path="navbar" element={<NavbarEditor />} />
+              <Route path="theme" element={<Theme />} />
+              <Route path="home" element={<HomeStats />} />
+              <Route path="about" element={<AboutEditor />} />
+              <Route path="skills" element={<SkillsEditor />} />
+              <Route path="projects" element={<ProjectsEditor />} />
+              <Route path="contact" element={<ContactEditor />} />
+              <Route path="socials" element={<SocialsEditor />} />
+              <Route path="password" element={<Password />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/admin/identity" replace />} />
+          </Routes>
+        </ConfirmProvider>
+      </ToastProvider>
+    </div>
   );
 }
