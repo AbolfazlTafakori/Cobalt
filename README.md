@@ -5,6 +5,9 @@ theme, with a complete admin panel that controls **everything** on the site: tex
 numbers, tags, stats, social links, projects, and even the theme colors. No code
 edits needed to update your content — just log in to `/admin` and save.
 
+Stats can also read themselves from GitHub, and the site ships with an optional
+light theme — both switched on from the panel. See [Admin panel](#admin-panel).
+
 ---
 
 ## ⚡ Quick install
@@ -37,19 +40,72 @@ saves it to the backend (`PUT /api/content`); the public site loads it on start
 
 ---
 
+## Admin panel
+
+Sign in at `/admin` (or at the admin subdomain in a server install). Every page
+edits the shared content document live and saves it with one button.
+
+| Page | Controls |
+|------|----------|
+| **Identity** | Name, role, greeting, tagline, profile photo, CV file or link |
+| **Navbar** | Logo text, download-button label, menu labels, theme switch |
+| **Theme & Colors** | Brand and surface colors for the whole site |
+| **Home (Stats)** | The four numbers under the hero |
+| **About / Skills / Projects / Contact** | Copy, cards, tags, images, links |
+| **Social Links** | Label, URL and icon per link |
+| **Change Password** | Admin credentials |
+
+Two behaviors worth knowing about:
+
+### Live GitHub stats
+
+Any stat — on the Home bar or the Projects header — can read its number from
+GitHub instead of being typed. Switch on **Live GitHub** under the stat and pick
+what it counts:
+
+| Metric | Source |
+|--------|--------|
+| **Repositories** | Your public repository count |
+| **Commits this year** | Public commits authored since January 1st |
+
+The account comes from whichever **Social Links** entry points at a GitHub
+profile, so there is nothing extra to configure and no token to keep. The number
+you typed stays as the offline fallback: if GitHub is unreachable, rate limited,
+or no GitHub link is set, the site quietly shows the typed value instead of a
+blank. Results are cached for six hours, because GitHub allows 60 unauthenticated
+calls an hour and every visitor shares that budget by IP. A site with no live
+stat never calls GitHub at all.
+
+### Light theme
+
+The site is dark by default and the theme switch is **hidden** — the button is
+not rendered at all, so visitors see one deliberate look. Turn on *Show the
+light/dark switch in the header* under **Navbar** to offer both; each visitor's
+choice is then remembered in their browser.
+
+### Saving from two tabs
+
+Each admin page holds the whole content document and saves all of it, so a tab
+left open would otherwise overwrite everything saved since it loaded. A save
+carrying a stale revision is refused and nothing is written — your edits stay on
+screen with an offer to reload.
+
+---
+
 ## Project structure
 
 ```
 Cobalt/
-├── src/                       Frontend (React + Vite)
-│   ├── components/            public site — Navbar, sections, UI widgets
-│   ├── content/              unified content model + ContentProvider
+├── src/                      Frontend (React + Vite)
+│   ├── components/           public site — Navbar, sections, UI widgets
+│   ├── content/              content model, ContentProvider, GitHub stats
 │   ├── admin/                admin panel — pages, components, API client
 │   ├── hooks/
+│   ├── index.css             theme tokens (dark + light) and base styles
 │   └── App.jsx
 ├── backend/
 │   └── ResumeAPI/            ASP.NET Core 9 API  (see backend/README.md)
-├── install.sh               one-command server installer
+├── install.sh                one-command server installer
 └── README.md
 ```
 
@@ -150,7 +206,8 @@ server without conflicts:
 
 ## Run locally (development)
 
-Requires **Node.js 18+** and the **.NET 9 SDK**.
+Requires **Node.js 20.19+** (or 22.12+) and the **.NET 9 SDK** — Vite 8 will not
+run on Node 18.
 
 ```bash
 # 1) Backend — terminal 1

@@ -89,7 +89,9 @@ apt-get install -y -qq \
 success "nginx, certbot, git installed"
 
 # ── Node.js 20 (needed to build the React frontend) ──
-node_ok() { command -v node &>/dev/null && [[ "$(node -v 2>/dev/null | sed 's/v//;s/\..*//')" -ge 18 ]]; }
+# Vite 8 requires ^20.19 || >=22.12, so an existing Node 18 is not good enough:
+# accepting it here would skip the install and fail later at `npm run build`.
+node_ok() { command -v node &>/dev/null && [[ "$(node -v 2>/dev/null | sed 's/v//;s/\..*//')" -ge 20 ]]; }
 if node_ok; then
     success "Node.js already installed: $(node -v)"
 else
