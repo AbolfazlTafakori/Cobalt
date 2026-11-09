@@ -79,6 +79,13 @@ export default function Identity() {
             <Field label="Greeting" value={p.greeting} onChange={set('greeting')} placeholder="Hello, I'm" />
           </Row>
           <Field as="textarea" label="Tagline" value={p.tagline} onChange={set('tagline')} />
+          <Field
+            label="Browser Tab Title"
+            value={p.pageTitle}
+            onChange={set('pageTitle')}
+            placeholder={`${p.firstName || ''} ${p.lastName || ''} — ${p.role || ''}`.trim()}
+            hint="Shown in the browser tab and in Google search results. Leave empty to use “First Last — Role”."
+          />
         </div>
       </Card>
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import ScrollToTop from './components/layout/ScrollToTop';
@@ -30,7 +31,18 @@ function PublicLayout() {
   );
 }
 
+function useDocumentTitle() {
+  const { content } = useContent();
+  const p = content.profile || {};
+  useEffect(() => {
+    const fallback = `${p.firstName || ''} ${p.lastName || ''}${p.role ? ' — ' + p.role : ''}`.trim();
+    const title = (p.pageTitle && p.pageTitle.trim()) || fallback;
+    if (title) document.title = title;
+  }, [p.pageTitle, p.firstName, p.lastName, p.role]);
+}
+
 export default function App() {
+  useDocumentTitle();
   return (
     <Routes>
       {/* Admin panel — no public navbar */}

@@ -28,6 +28,8 @@ export const defaultContent = {
     greeting: "Hello, I'm",
     resumeUrl: '/cv.pdf',
     avatar: '', // uploaded filename; empty = use bundled placeholder
+    // Browser tab / SEO title. Empty = fall back to "<First> <Last> — <Role>".
+    pageTitle: '',
   },
 
   // ---- Navbar ----
