@@ -10,6 +10,7 @@ import Contact from './components/sections/Contact';
 import AdminApp from './admin/AdminApp';
 import { useContent } from './content/ContentContext';
 import { useTheme } from './hooks/useTheme';
+import { uploadUrl } from './admin/api';
 
 // Public site shell: top navbar + routed section below.
 function PublicLayout() {
@@ -31,7 +32,7 @@ function PublicLayout() {
   );
 }
 
-function useDocumentTitle() {
+function useDocumentHead() {
   const { content } = useContent();
   const p = content.profile || {};
   useEffect(() => {
@@ -39,10 +40,20 @@ function useDocumentTitle() {
     const title = (p.pageTitle && p.pageTitle.trim()) || fallback;
     if (title) document.title = title;
   }, [p.pageTitle, p.firstName, p.lastName, p.role]);
+  useEffect(() => {
+    const href = p.favicon ? uploadUrl(p.favicon) : '/favicon.svg';
+    let link = document.querySelector("link[rel~='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+    link.setAttribute('href', href);
+  }, [p.favicon]);
 }
 
 export default function App() {
-  useDocumentTitle();
+  useDocumentHead();
   return (
     <Routes>
       {/* Admin panel — no public navbar */}

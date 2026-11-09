@@ -30,6 +30,8 @@ export const defaultContent = {
     avatar: '', // uploaded filename; empty = use bundled placeholder
     // Browser tab / SEO title. Empty = fall back to "<First> <Last> — <Role>".
     pageTitle: '',
+    // Favicon shown in browser tab and Google results. Empty = use bundled /favicon.svg.
+    favicon: '',
   },
 
   // ---- Navbar ----
